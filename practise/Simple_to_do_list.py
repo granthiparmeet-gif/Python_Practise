@@ -5,7 +5,7 @@ while True:
     print("2. View tasks")
     print("3. Exit")
 
-    choice = input("Choose an option: ")
+    choice = input("Choose option: ")
 
     if choice == "1":
         task = input("Enter task: ")
