@@ -8,6 +8,8 @@ Single-page MVP for tracking:
 - Gmail receipt parsing
 - merged registrar sync from Dynadot, NameSilo, and Unstoppable Domains
 - merged registrar sync from Dynadot, NameSilo, Sav, Spaceship, and Unstoppable Domains
+- Gmail OAuth + acquisition cost extraction
+- one-time backend Gmail setup via `npm run gmail:setup`
 
 ## Run
 
@@ -15,14 +17,16 @@ Single-page MVP for tracking:
 2. Fill in your keys
 3. Run `npm start`
 4. Open `http://localhost:3001`
+5. Run `npm run gmail:setup` once to authorize Gmail
 
 ## Current State
 
 - localStorage-backed UI state
-- merged domain list from three providers
-- separate config inputs for Dynadot, NameSilo, and Unstoppable
+- merged domain list from five providers
 - provider failures are isolated
 - backend server that reads local `.env`
+- Gmail tokens are stored locally in `.gmail-tokens.json`
+- Gmail access is refreshed automatically using the stored refresh token
 
 ## Environment
 
@@ -44,6 +48,7 @@ Use these variables in `.env`:
 - `GOOGLE_CLIENT_SECRET`
 - `GOOGLE_REDIRECT_URI`
 - `GMAIL_QUERY_FILTERS`
+- `GMAIL_SCAN_LIMIT`
 - `PORT`
 
 ## Official Docs
@@ -91,7 +96,6 @@ Use these variables in `.env`:
 
 When you want, I can wire in:
 
-- Gmail OAuth + inbox scanning
 - persistent database storage
 - automated receipt matching and review queue
 - deeper per-domain detail fetches for each registrar

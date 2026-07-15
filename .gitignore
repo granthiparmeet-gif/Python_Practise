@@ -1,4 +1,8 @@
 .env
+.env.*
+!.env.example
+.gmail-tokens.json
+client_secret_*.json
 .DS_Store
 node_modules
 *.log

@@ -2,7 +2,14 @@ const state = {
   loading: true,
   error: "",
   domains: [],
-  sourceInfo: { dynadot: false, namesilo: false, sav: false, spaceship: false, unstoppable: false },
+  sourceInfo: {
+    dynadot: false,
+    namesilo: false,
+    sav: false,
+    spaceship: false,
+    unstoppable: false,
+    gmail: false,
+  },
   sort: { key: "name", direction: "asc" },
 };
 
@@ -32,6 +39,7 @@ async function loadDomains() {
       sav: Boolean(data.providers?.sav?.ok),
       spaceship: Boolean(data.providers?.spaceship?.ok),
       unstoppable: Boolean(data.providers?.unstoppable?.ok),
+      gmail: Boolean(data.providers?.gmail?.connected),
     };
   } catch (error) {
     state.error = error.message || "Unexpected error";
@@ -58,6 +66,7 @@ function render() {
   if (state.sourceInfo.sav) providerBits.push("Sav connected");
   if (state.sourceInfo.spaceship) providerBits.push("Spaceship connected");
   if (state.sourceInfo.unstoppable) providerBits.push("Unstoppable connected");
+  providerBits.push(state.sourceInfo.gmail ? "Gmail connected" : "Gmail disconnected");
   if (state.providerErrors?.length) {
     providerBits.push(
       ...state.providerErrors.map((item) => `${item.provider}: ${item.error}`),
@@ -65,8 +74,12 @@ function render() {
   }
   providerStatusEl.textContent = providerBits.join(" | ");
 
+  if (!state.sourceInfo.gmail) {
+    providerStatusEl.textContent += " | Run `npm run gmail:setup` once to authorize Gmail.";
+  }
+
   if (state.loading) {
-    tableBodyEl.innerHTML = `<tr><td class="empty-cell" colspan="7">Fetching your portfolio from Dynadot, NameSilo, Sav, Spaceship, and Unstoppable Domains.</td></tr>`;
+    tableBodyEl.innerHTML = `<tr><td class="empty-cell" colspan="7">Fetching your portfolio from Dynadot, NameSilo, Sav, Spaceship, Unstoppable Domains, and Gmail.</td></tr>`;
     return;
   }
 
@@ -89,12 +102,12 @@ function render() {
       (domain) => `
         <tr>
           <td class="domain-name ${providerClass(domain.source)}">${escapeHtml(domain.name || "Unknown")}</td>
-          <td></td>
+          <td>${escapeHtml(formatPurchase(domain.purchasePrice ?? domain.purchaseAmount) || (state.sourceInfo.gmail ? "" : "Setup pending"))}</td>
           <td>${escapeHtml(displayDate(domain.expiry))}</td>
           <td class="${daysRemainingClass(domain.expiry)}">${escapeHtml(daysRemainingValue(domain.expiry))}</td>
           <td>${escapeHtml(domain.registrar || domain.source || "-")}</td>
-          <td></td>
-          <td></td>
+          <td>${escapeHtml(displayDate(domain.purchaseDate || domain.boughtOn) || (state.sourceInfo.gmail ? "" : "Setup pending"))}</td>
+          <td>${escapeHtml(displayHolding(domain.holdingDays || domain.holding, domain.purchaseDate || domain.boughtOn) || (state.sourceInfo.gmail ? "" : "Setup pending"))}</td>
         </tr>
       `,
     )
@@ -126,7 +139,7 @@ function getSortValue(domain, key) {
     case "name":
       return domain.name || "";
     case "purchase":
-      return domain.purchasePrice ?? "";
+      return parseMoneyValue(domain.purchaseAmount ?? domain.purchasePrice ?? "");
     case "expiry":
       return domain.expiry || "";
     case "daysRemaining":
@@ -136,7 +149,7 @@ function getSortValue(domain, key) {
     case "boughtOn":
       return domain.purchaseDate || domain.boughtOn || "";
     case "holding":
-      return domain.holding || domain.holdingDays || "";
+      return domain.holdingDays || domain.holding || "";
     default:
       return domain[key] ?? "";
   }
@@ -215,13 +228,57 @@ function providerClass(source) {
 function displayDate(value) {
   if (!value) return "";
   const text = String(value);
-  if (/^\d{4}-\d{2}-\d{2}T/.test(text)) return text.slice(0, 10);
-  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+  const datePart = /^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(text) ? text.slice(0, 10) : "";
+
+  if (datePart) {
+    const [year, month, day] = datePart.split("-").map(Number);
+    if (Number.isFinite(year) && Number.isFinite(month) && Number.isFinite(day)) {
+      return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC",
+      }).format(new Date(Date.UTC(year, month - 1, day)));
+    }
+  }
+
   const parsed = Date.parse(text);
   if (!Number.isNaN(parsed)) {
-    return new Date(parsed).toISOString().slice(0, 10);
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(new Date(parsed));
   }
+
   return text;
+}
+
+function formatPurchase(value) {
+  if (value === null || value === undefined || value === "") return "";
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Number.isInteger(value) ? String(value) : value.toFixed(2);
+  }
+  return String(value);
+}
+
+function displayHolding(value, purchaseDate) {
+  if (value !== null && value !== undefined && value !== "") return String(value);
+  if (!purchaseDate) return "";
+  const parsed = Date.parse(String(purchaseDate));
+  if (Number.isNaN(parsed)) return "";
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const purchase = new Date(parsed);
+  purchase.setHours(0, 0, 0, 0);
+  return String(Math.max(0, Math.round((today - purchase) / 86400000)));
+}
+
+function parseMoneyValue(value) {
+  if (value === null || value === undefined || value === "") return "";
+  const parsed = Number(String(value).replace(/[^0-9.-]/g, ""));
+  return Number.isFinite(parsed) ? parsed : "";
 }
 
 function escapeHtml(value) {
@@ -260,4 +317,5 @@ headerButtons.forEach((button) => {
 });
 
 refreshBtn.addEventListener("click", loadDomains);
+
 loadDomains();
