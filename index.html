@@ -22,7 +22,24 @@
         <p id="provider-status" class="provider-status"></p>
       </section>
 
-      <section id="domains-list" class="domains-grid"></section>
+      <section class="table-shell">
+        <div class="table-wrap">
+          <table class="domains-table">
+            <thead>
+              <tr>
+                <th><button class="sort-trigger" type="button" data-sort="name">Domains</button></th>
+                <th><button class="sort-trigger" type="button" data-sort="purchase">Purchase</button></th>
+                <th><button class="sort-trigger" type="button" data-sort="expiry">Expires on</button></th>
+                <th><button class="sort-trigger" type="button" data-sort="daysRemaining">Days Remaining</button></th>
+                <th><button class="sort-trigger" type="button" data-sort="registrar">Registrar</button></th>
+                <th><button class="sort-trigger" type="button" data-sort="boughtOn">Bought on</button></th>
+                <th><button class="sort-trigger" type="button" data-sort="holding">Holding</button></th>
+              </tr>
+            </thead>
+            <tbody id="domains-table-body"></tbody>
+          </table>
+        </div>
+      </section>
     </main>
 
     <script src="app.js"></script>
