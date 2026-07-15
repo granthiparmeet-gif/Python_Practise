@@ -2,6 +2,8 @@ const state = {
   loading: true,
   error: "",
   domains: [],
+  removedDomains: [],
+  providerErrors: [],
   sourceInfo: {
     dynadot: false,
     namesilo: false,
@@ -15,6 +17,9 @@ const state = {
 
 const statusEl = document.getElementById("status");
 const tableBodyEl = document.getElementById("domains-table-body");
+const removedBodyEl = document.getElementById("removed-domains-table-body");
+const removedCountEl = document.getElementById("removed-count");
+const removedDetailsEl = document.getElementById("removed-domains-details");
 const refreshBtn = document.getElementById("refresh-btn");
 const providerStatusEl = document.getElementById("provider-status");
 const headerButtons = Array.from(document.querySelectorAll("[data-sort]"));
@@ -32,6 +37,7 @@ async function loadDomains() {
       throw new Error(data?.details || data?.error || "Failed to load domains");
     }
     state.domains = Array.isArray(data.domains) ? data.domains : [];
+    state.removedDomains = Array.isArray(data.removedDomains) ? data.removedDomains : [];
     state.providerErrors = Array.isArray(data.providerErrors) ? data.providerErrors : [];
     state.sourceInfo = {
       dynadot: Boolean(data.providers?.dynadot?.ok),
@@ -57,7 +63,7 @@ function render() {
   } else if (state.error) {
     statusEl.textContent = state.error;
   } else {
-    statusEl.textContent = `${state.domains.length} domain${state.domains.length === 1 ? "" : "s"} found`;
+    statusEl.textContent = `${state.domains.length} active domain${state.domains.length === 1 ? "" : "s"} found`;
   }
 
   const providerBits = [];
@@ -80,16 +86,19 @@ function render() {
 
   if (state.loading) {
     tableBodyEl.innerHTML = `<tr><td class="empty-cell" colspan="7">Fetching your portfolio from Dynadot, NameSilo, Sav, Spaceship, Unstoppable Domains, and Gmail.</td></tr>`;
+    renderRemovedDomains();
     return;
   }
 
   if (state.error) {
     tableBodyEl.innerHTML = `<tr><td class="empty-cell error" colspan="7">${escapeHtml(state.error)}</td></tr>`;
+    renderRemovedDomains();
     return;
   }
 
   if (!state.domains.length) {
     tableBodyEl.innerHTML = `<tr><td class="empty-cell" colspan="7">No domains returned by the connected APIs yet.</td></tr>`;
+    renderRemovedDomains();
     return;
   }
 
@@ -102,7 +111,7 @@ function render() {
       (domain) => `
         <tr>
           <td class="domain-name ${providerClass(domain.source)}">${escapeHtml(domain.name || "Unknown")}</td>
-          <td>${escapeHtml(formatPurchase(domain.purchasePrice ?? domain.purchaseAmount) || (state.sourceInfo.gmail ? "" : "Setup pending"))}</td>
+          <td>${escapeHtml(formatPurchase(domain.totalPrice ?? domain.purchasePrice ?? domain.purchaseAmount) || (state.sourceInfo.gmail ? "" : "Setup pending"))}</td>
           <td>${escapeHtml(displayDate(domain.expiry))}</td>
           <td class="${daysRemainingClass(domain.expiry)}">${escapeHtml(daysRemainingValue(domain.expiry))}</td>
           <td>${escapeHtml(domain.registrar || domain.source || "-")}</td>
@@ -112,6 +121,8 @@ function render() {
       `,
     )
     .join("");
+
+  renderRemovedDomains();
 }
 
 function getSortedDomains() {
@@ -134,12 +145,23 @@ function getSortedDomains() {
   });
 }
 
+function getSortedRemovedDomains() {
+  return [...state.removedDomains].sort((left, right) => {
+    const leftTime = Date.parse(left?.removedAt || "");
+    const rightTime = Date.parse(right?.removedAt || "");
+    if (Number.isNaN(leftTime) && Number.isNaN(rightTime)) return 0;
+    if (Number.isNaN(leftTime)) return 1;
+    if (Number.isNaN(rightTime)) return -1;
+    return rightTime - leftTime;
+  });
+}
+
 function getSortValue(domain, key) {
   switch (key) {
     case "name":
       return domain.name || "";
     case "purchase":
-      return parseMoneyValue(domain.purchaseAmount ?? domain.purchasePrice ?? "");
+      return parseMoneyValue(domain.totalAmount ?? domain.totalPrice ?? domain.purchaseAmount ?? domain.purchasePrice ?? "");
     case "expiry":
       return domain.expiry || "";
     case "daysRemaining":
@@ -165,6 +187,32 @@ function compareSortValues(left, right, key) {
   }
 
   return String(left).localeCompare(String(right), undefined, { sensitivity: "base" });
+}
+
+function renderRemovedDomains() {
+  const count = state.removedDomains.length;
+  if (removedCountEl) {
+    removedCountEl.textContent = String(count);
+  }
+
+  if (!removedDetailsEl) return;
+
+  if (!count) {
+    removedBodyEl.innerHTML = `<tr><td class="empty-cell" colspan="3">No removed domains have been recorded yet.</td></tr>`;
+    return;
+  }
+
+  removedBodyEl.innerHTML = getSortedRemovedDomains()
+    .map(
+      (domain) => `
+        <tr>
+          <td class="domain-name provider-removed">${escapeHtml(domain.name || "Unknown")}</td>
+          <td>${escapeHtml(domain.registrar || domain.source || "-")}</td>
+          <td>${escapeHtml(displayDateTime(domain.removedAt))}</td>
+        </tr>
+      `,
+    )
+    .join("");
 }
 
 function isBlankValue(value) {
@@ -253,6 +301,20 @@ function displayDate(value) {
   }
 
   return text;
+}
+
+function displayDateTime(value) {
+  if (!value) return "";
+  const parsed = Date.parse(String(value));
+  if (Number.isNaN(parsed)) return displayDate(value);
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(parsed));
 }
 
 function formatPurchase(value) {

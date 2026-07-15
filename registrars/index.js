@@ -3,6 +3,7 @@ const namesiloBaseUrl = () => process.env.NAMESILO_BASE_URL || "https://www.name
 const savBaseUrl = () => process.env.SAV_BASE_URL || "https://api.sav.com";
 const spaceshipBaseUrl = () => process.env.SPACESHIP_BASE_URL || "https://spaceship.dev/api";
 const unstoppableBaseUrl = () => process.env.UD_API_BASE_URL || "https://api.unstoppabledomains.com";
+const unstoppableResellerBaseUrl = () => `${unstoppableBaseUrl()}/partner/v3`;
 
 export async function getRegistrarDomains() {
   const settled = await Promise.allSettled([
@@ -11,6 +12,7 @@ export async function getRegistrarDomains() {
     fetchSavDomains(),
     fetchSpaceshipDomains(),
     fetchUnstoppableDomains(),
+    fetchUnstoppableBillingTransactions(),
   ]);
 
   const dynadotResult = settled[0];
@@ -18,12 +20,15 @@ export async function getRegistrarDomains() {
   const savResult = settled[2];
   const spaceshipResult = settled[3];
   const unstoppableResult = settled[4];
+  const unstoppableBillingResult = settled[5];
 
   const dynadotDomains = dynadotResult.status === "fulfilled" ? dynadotResult.value : [];
   const namesiloDomains = namesiloResult.status === "fulfilled" ? namesiloResult.value : [];
   const savDomains = savResult.status === "fulfilled" ? savResult.value : [];
   const spaceshipDomains = spaceshipResult.status === "fulfilled" ? spaceshipResult.value : [];
   const unstoppableDomains = unstoppableResult.status === "fulfilled" ? unstoppableResult.value : [];
+  const unstoppableBillingTransactions =
+    unstoppableBillingResult.status === "fulfilled" ? unstoppableBillingResult.value : [];
   const domains = mergeDomains(
     dynadotDomains,
     namesiloDomains,
@@ -31,6 +36,7 @@ export async function getRegistrarDomains() {
     spaceshipDomains,
     unstoppableDomains,
   );
+  const mergedDomains = applyUnstoppableBillingPrices(domains, unstoppableBillingTransactions);
   const providerErrors = [];
 
   if (dynadotResult.status === "rejected") {
@@ -63,9 +69,22 @@ export async function getRegistrarDomains() {
       error: unstoppableResult.reason instanceof Error ? unstoppableResult.reason.message : String(unstoppableResult.reason),
     });
   }
+  if (unstoppableBillingResult.status === "rejected") {
+    providerErrors.push({
+      provider: "Unstoppable Billing",
+      error: unstoppableBillingResult.reason instanceof Error ? unstoppableBillingResult.reason.message : String(unstoppableBillingResult.reason),
+    });
+  }
 
   return {
-    domains,
+    domains: mergedDomains,
+    providerDomains: {
+      dynadot: dynadotDomains,
+      namesilo: namesiloDomains,
+      sav: savDomains,
+      spaceship: spaceshipDomains,
+      unstoppable: unstoppableDomains,
+    },
     providerErrors,
     providers: {
       dynadot: { ok: dynadotResult.status === "fulfilled", count: dynadotDomains.length },
@@ -170,6 +189,39 @@ async function fetchUnstoppableDomains() {
   return dedupeDomains(extractUnstoppableDomains(parseJson(raw)));
 }
 
+async function fetchUnstoppableBillingTransactions() {
+  const apiKey = process.env.UD_MCP_API_KEY;
+  if (!apiKey) return [];
+
+  const attempts = [
+    {
+      Authorization: `Bearer ${apiKey}`,
+      Accept: "application/json",
+    },
+    {
+      "x-api-key": apiKey,
+      Accept: "application/json",
+    },
+  ];
+
+  for (const headers of attempts) {
+    const response = await fetch(`${unstoppableResellerBaseUrl()}/account/billing/transactions`, {
+      method: "GET",
+      headers,
+    });
+
+    const raw = await response.text();
+    if (response.ok) {
+      return extractUnstoppableBillingTransactions(parseJson(raw));
+    }
+    if (response.status !== 401 && response.status !== 403) {
+      throw new Error(`Unstoppable billing transactions returned HTTP ${response.status}: ${raw.slice(0, 500)}`);
+    }
+  }
+
+  return [];
+}
+
 function extractDynadotDomains(payload) {
   const mainDomains =
     payload?.ListDomainInfoResponse?.MainDomains ||
@@ -194,6 +246,7 @@ function extractDynadotDomains(payload) {
       return {
         name,
         source: "Dynadot",
+        registrar: "Dynadot",
         status: domain.Status || "unknown",
         expiry: formatDynadotTimestamp(domain.Expiration),
         registration: formatDynadotTimestamp(domain.Registration),
@@ -225,6 +278,8 @@ function extractUnstoppableDomains(payload) {
       return {
         name,
         source: "Unstoppable",
+        registrar: "Unstoppable",
+        marketplacePrice: formatUnstoppablePrice(domain?.listing?.price),
         status:
           domain.transferStatus ||
           domain.registryType ||
@@ -239,6 +294,195 @@ function extractUnstoppableDomains(payload) {
       };
     })
     .filter(Boolean);
+}
+
+function extractUnstoppableBillingTransactions(payload) {
+  const items =
+    payload?.transactions ||
+    payload?.data?.transactions ||
+    payload?.data ||
+    payload?.results ||
+    payload?.items ||
+    [];
+
+  const list = Array.isArray(items) ? items : [items];
+  return list
+    .map((transaction) => {
+      const text = [
+        deepFindString(transaction, [
+          /^domain$/i,
+          /domain_name/i,
+          /domainName/i,
+          /description/i,
+          /memo/i,
+          /note/i,
+          /title/i,
+        ]),
+        deepFindString(transaction, [/^name$/i, /itemName/i, /productName/i]),
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .trim();
+
+      const domainName = extractDomainNameFromText(text) || deepFindString(transaction, [/^domain$/i, /domain_name/i, /domainName/i]);
+      if (!domainName) return null;
+
+      const amount =
+        deepFindValue(transaction, [
+          /amountFormatted/i,
+          /formattedAmount/i,
+          /totalFormatted/i,
+          /chargeFormatted/i,
+          /priceFormatted/i,
+        ]) ??
+        deepFindValue(transaction, [
+          /amount$/i,
+          /^amount$/i,
+          /total/i,
+          /grossAmount/i,
+          /netAmount/i,
+          /price/i,
+          /charge/i,
+        ]);
+
+      const formattedAmount = formatUnstoppableTransactionAmount(amount);
+      if (!formattedAmount) return null;
+
+      return {
+        domainName,
+        searchText: text,
+        amountFormatted: formattedAmount,
+        amountValue: parseUnstoppableTransactionAmountValue(amount),
+        timestamp: normalizeDateValue(
+          deepFindValue(transaction, [/createdAt/i, /processedAt/i, /transactionDate/i, /date/i, /timestamp/i]),
+        ),
+        type: deepFindString(transaction, [/^type$/i, /transactionType/i, /kind/i]) || "",
+      };
+    })
+    .filter(Boolean);
+}
+
+function applyUnstoppableBillingPrices(domains, transactions) {
+  if (!Array.isArray(domains) || !Array.isArray(transactions) || !transactions.length) return domains;
+
+  const bestByDomain = new Map();
+  for (const transaction of transactions) {
+    const key = normalizeDomainKey(transaction.domainName);
+    if (!key) continue;
+    if (!isPurchaseLikeTransaction(transaction)) continue;
+
+    const timestamp = Date.parse(transaction.timestamp || "");
+    const existing = bestByDomain.get(key);
+    if (!existing) {
+      bestByDomain.set(key, transaction);
+      continue;
+    }
+
+    const existingTime = Date.parse(existing.timestamp || "");
+    if (Number.isFinite(timestamp) && Number.isFinite(existingTime) && timestamp < existingTime) {
+      bestByDomain.set(key, transaction);
+      continue;
+    }
+
+    if (!existing.amountFormatted && transaction.amountFormatted) {
+      bestByDomain.set(key, transaction);
+    }
+  }
+
+  return domains.map((domain) => {
+    if (!isUnstoppableDomain(domain)) return domain;
+    const transaction = bestByDomain.get(normalizeDomainKey(domain.name));
+    if (!transaction) return domain;
+
+    return {
+      ...domain,
+      purchasePrice: transaction.amountFormatted,
+      purchaseAmount: transaction.amountValue ?? domain.purchaseAmount ?? "",
+      purchaseSource: "unstoppable-billing",
+    };
+  });
+}
+
+function isUnstoppableDomain(domain) {
+  return String(domain?.source || "").toLowerCase().includes("unstoppable");
+}
+
+function isPurchaseLikeTransaction(transaction) {
+  const text = `${transaction?.type || ""} ${transaction?.searchText || ""} ${transaction?.domainName || ""}`.toLowerCase();
+  return (
+    /(purchase|registration|register|buy|checkout|order)/i.test(text) &&
+    !/(renewal|renew|renewed)/i.test(text)
+  );
+}
+
+function extractDomainNameFromText(text) {
+  const match = String(text || "").match(/\b([a-z0-9-]+\.[a-z]{2,})\b/i);
+  return match?.[1] || "";
+}
+
+function parseUnstoppableTransactionAmountValue(value) {
+  if (value === null || value === undefined || value === "") return null;
+  if (typeof value === "number" && Number.isFinite(value)) {
+    if (Number.isInteger(value)) {
+      return value > 100 ? value / 100 : value;
+    }
+    return value;
+  }
+
+  const normalized = String(value).replace(/,/g, "").trim();
+  if (!normalized) return null;
+  if (/^[\$\€\£\₹]/.test(normalized)) {
+    const numeric = Number(normalized.replace(/[^\d.-]/g, ""));
+    return Number.isFinite(numeric) ? numeric : null;
+  }
+  if (/^-?\d+\.\d+$/.test(normalized)) {
+    const numeric = Number(normalized);
+    return Number.isFinite(numeric) ? numeric : null;
+  }
+  if (/^-?\d+$/.test(normalized)) {
+    const numeric = Number(normalized);
+    if (!Number.isFinite(numeric)) return null;
+    return numeric > 100 ? numeric / 100 : numeric;
+  }
+  return null;
+}
+
+function formatUnstoppableTransactionAmount(value) {
+  if (value === null || value === undefined || value === "") return "";
+
+  if (typeof value === "number" && Number.isFinite(value)) {
+    const dollars = Number.isInteger(value) && value > 100 ? value / 100 : value;
+    return `$${Number(dollars).toFixed(2)}`;
+  }
+
+  const normalized = String(value).trim();
+  if (!normalized) return "";
+  if (/^[\$\€\£\₹]/.test(normalized)) return normalized;
+
+  const numeric = Number(normalized.replace(/,/g, ""));
+  if (!Number.isFinite(numeric)) return normalized;
+  const dollars = /^\d+$/.test(normalized) && numeric > 100 ? numeric / 100 : numeric;
+  return `$${Number(dollars).toFixed(2)}`;
+}
+
+function formatUnstoppablePrice(value) {
+  if (value === null || value === undefined || value === "") return "";
+
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return `$${(value / 100).toFixed(2)}`;
+  }
+
+  const normalized = String(value).trim();
+  if (!normalized) return "";
+  if (/^[\$\€\£\₹]/.test(normalized)) return normalized;
+  if (/^[A-Z]{3}\s+[0-9]/.test(normalized)) return normalized;
+
+  const parsed = Number(normalized.replace(/,/g, ""));
+  if (Number.isFinite(parsed)) {
+    return `$${(parsed / 100).toFixed(2)}`;
+  }
+
+  return normalized;
 }
 
 function extractNameSiloDomains(payload) {

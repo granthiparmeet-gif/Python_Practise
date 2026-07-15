@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { buildUnstoppableGmailQuery, extractUnstoppableMoney } from "./filters/unstoppable.js";
+import { extractUnstoppableMoney } from "./filters/unstoppable.js";
 
 const gmailTokensPath = path.join(process.cwd(), ".gmail-tokens.json");
 const gmailAuthBaseUrl = "https://accounts.google.com/o/oauth2/v2/auth";
@@ -180,12 +180,22 @@ export async function fetchGmailDomainLedger(domains) {
           continue;
         }
 
+        const normalizedMoney = normalizeBulkUnstoppablePurchaseAmount({
+          subject: parsed.subject,
+          text: parsed.text,
+          transactionType,
+          money,
+        });
+        const receiptDate = isSavReceipt(parsed.subject, parsed.text)
+          ? extractSavPurchaseDate(parsed.text) || parsed.date
+          : parsed.date;
+
         for (const domainName of candidateDomains) {
           applyGmailMatch(ledger, domainName, {
             transactionType,
-            amount: money.amount,
-            currency: money.currency,
-            date: parsed.date,
+            amount: normalizedMoney.amount,
+            currency: normalizedMoney.currency,
+            date: receiptDate,
             subject: parsed.subject,
             from: parsed.from,
           });
@@ -214,15 +224,20 @@ export async function fetchGmailDomainLedger(domains) {
     if (!record) return domain;
     return {
       ...domain,
-      purchasePrice: record.purchaseAmountFormatted || "",
-      purchaseAmount: record.purchaseAmountValue ?? "",
+      purchasePrice: record.totalAmountFormatted || record.purchaseAmountFormatted || domain.purchasePrice || domain.purchaseAmount || "",
+      purchaseAmount: record.totalAmountCents ? record.totalAmountCents / 100 : record.purchaseAmountValue ?? domain.purchaseAmount ?? "",
       purchaseDate: record.purchaseDate || "",
       boughtOn: record.purchaseDate || "",
       holding: record.holdingDays ?? "",
       holdingDays: record.holdingDays ?? "",
+      transferPrice: record.transferAmountFormatted || "",
+      transferAmount: record.transferAmountValue ?? "",
+      transferDate: record.transferDate || "",
       renewalPrice: record.renewalAmountFormatted || "",
       renewalAmount: record.renewalAmountValue ?? "",
       renewalDate: record.renewalDate || "",
+      totalAmount: record.totalAmountCents ? record.totalAmountCents / 100 : "",
+      totalPrice: record.totalAmountFormatted || "",
       gmail: record,
     };
   });
@@ -346,7 +361,90 @@ async function fetchGmailProfile(accessToken) {
 
 function buildGmailQuery() {
   const rawFilters = String(process.env.GMAIL_QUERY_FILTERS || "").trim();
-  return buildUnstoppableGmailQuery(rawFilters);
+  const defaultSenders = [
+    "from:orders@dynadot.com",
+    "from:support@namesilo.com",
+    "from:support@sav.com",
+    "from:receipts@spaceship.com",
+    "from:notifications@unstoppabledomains.com",
+  ];
+  const defaultPhrases = [
+    '"Order Finished"',
+    '"domain registration"',
+    '"domain registered"',
+    '"Thank you for your order"',
+    '"NameSilo.com Receipt"',
+    '"Order Total"',
+    '"Sav.com Receipt"',
+    '"Spaceship order summary"',
+    '"Order summary"',
+    '"Final cost"',
+    '"Auto Renewal"',
+    '"Paid on"',
+    '"Unstoppable Domains Receipt"',
+    '"Thank you for your purchase"',
+    '"Products Purchased"',
+    '"DNS Domain"',
+    "receipt",
+  ];
+  const defaultClause = buildReceiptClause(defaultSenders, defaultPhrases);
+
+  if (!rawFilters) {
+    return defaultClause;
+  }
+
+  if (looksLikeRawGmailQuery(rawFilters)) {
+    if (
+      /dynadot\.com/i.test(rawFilters) &&
+      /namesilo\.com/i.test(rawFilters) &&
+      /sav\.com/i.test(rawFilters) &&
+      /spaceship\.com/i.test(rawFilters) &&
+      /unstoppabledomains\.com/i.test(rawFilters)
+    ) {
+      return rawFilters;
+    }
+    return `(${rawFilters}) OR (${defaultClause})`;
+  }
+
+  const senders = rawFilters
+    .split(/[\n,]+/)
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .map((value) => (/@/.test(value) ? `from:${value}` : `from:${value}`));
+
+  if (!senders.some((sender) => /dynadot\.com/i.test(sender))) {
+    senders.unshift("from:orders@dynadot.com");
+  }
+  if (!senders.some((sender) => /namesilo\.com/i.test(sender))) {
+    senders.unshift("from:support@namesilo.com");
+  }
+  if (!senders.some((sender) => /sav\.com/i.test(sender))) {
+    senders.unshift("from:support@sav.com");
+  }
+  if (!senders.some((sender) => /spaceship\.com/i.test(sender))) {
+    senders.unshift("from:receipts@spaceship.com");
+  }
+  if (!senders.some((sender) => /unstoppabledomains\.com/i.test(sender))) {
+    senders.unshift("from:notifications@unstoppabledomains.com");
+  }
+
+  return [
+    buildReceiptClause(senders, defaultPhrases),
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function buildReceiptClause(senders, phrases) {
+  return [
+    "(",
+    (Array.isArray(senders) ? senders : []).join(" OR "),
+    ")",
+    "(",
+    (Array.isArray(phrases) ? phrases : []).join(" OR "),
+    ")",
+    "newer_than:10y",
+  ].join(" ");
 }
 
 async function listGmailMessageIds(accessToken, query) {
@@ -586,10 +684,17 @@ function createGmailRecord() {
     purchaseAmountFormatted: "",
     purchaseDate: "",
     purchaseTimestamp: 0,
+    transferAmountValue: null,
+    transferAmountFormatted: "",
+    transferDate: "",
+    transferTimestamp: 0,
     renewalAmountValue: null,
     renewalAmountFormatted: "",
     renewalDate: "",
     renewalTimestamp: 0,
+    totalAmountCents: 0,
+    totalAmountFormatted: "",
+    totalCurrency: "",
     holdingDays: "",
     matchedCount: 0,
     sources: [],
@@ -606,6 +711,7 @@ function applyGmailMatch(ledger, domainName, match) {
   const amountValue = parseGmailMoneyValue(match.amount);
   const amountFormatted = formatGmailMoney(match.amount, match.currency);
   const sourceLabel = [match.subject, match.from].filter(Boolean).join(" | ");
+  const amountCents = Number.isFinite(amountValue) ? Math.round(amountValue * 100) : null;
 
   if (match.transactionType === "renewal") {
     if (!record.renewalTimestamp || timestamp >= record.renewalTimestamp) {
@@ -614,6 +720,13 @@ function applyGmailMatch(ledger, domainName, match) {
       record.renewalDate = match.date || record.renewalDate;
       record.renewalTimestamp = timestamp || record.renewalTimestamp;
     }
+  } else if (match.transactionType === "transfer") {
+    if (!record.transferTimestamp || timestamp <= record.transferTimestamp) {
+      record.transferAmountValue = amountValue;
+      record.transferAmountFormatted = amountFormatted;
+      record.transferDate = match.date || record.transferDate;
+      record.transferTimestamp = timestamp || record.transferTimestamp;
+    }
   } else {
     if (!record.purchaseTimestamp || timestamp <= record.purchaseTimestamp) {
       record.purchaseAmountValue = amountValue;
@@ -621,6 +734,15 @@ function applyGmailMatch(ledger, domainName, match) {
       record.purchaseDate = match.date || record.purchaseDate;
       record.purchaseTimestamp = timestamp || record.purchaseTimestamp;
     }
+  }
+
+  if (amountCents !== null) {
+    record.totalAmountCents += amountCents;
+    if (!record.totalCurrency && match.currency) {
+      record.totalCurrency = match.currency;
+    }
+    const totalAmount = (record.totalAmountCents / 100).toFixed(2);
+    record.totalAmountFormatted = formatGmailMoney(totalAmount, record.totalCurrency || match.currency || "$");
   }
 
   if (timestamp && record.purchaseDate) {
@@ -682,10 +804,22 @@ function normalizeSearchText(text) {
 
 function classifyGmailTransaction(subject, text) {
   const haystack = `${subject || ""} ${text || ""}`.toLowerCase();
-  if (/(renewed|renewal|auto-?renew|subscription renewed|renew your|domain renewal|order finished)/i.test(haystack)) {
+  if (/spaceship|order summary|final cost|initial charge|receipts@spaceship\.com/i.test(haystack)) {
+    return "purchase";
+  }
+  if (/namesilo\.com receipt|support@namesilo\.com|thank you for your order/i.test(haystack)) {
+    return "purchase";
+  }
+  if (/sav\.com receipt|support@sav\.com|paid on/i.test(haystack)) {
+    return "purchase";
+  }
+  if (/(renewed|renewal|auto-?renew|subscription renewed|renew your|domain renewal)/i.test(haystack)) {
     return "renewal";
   }
-  if (/(invoice|receipt|order|purchase|payment|paid|thank you for your purchase|thank you for your order|order received|order confirmation|your order|domain registration|domain transfer)/i.test(haystack)) {
+  if (/(transfer|domain transfer)/i.test(haystack)) {
+    return "transfer";
+  }
+  if (/(invoice|receipt|order|purchase|payment|paid|thank you for your purchase|thank you for your order|order received|order confirmation|your order|domain registration)/i.test(haystack)) {
     return "purchase";
   }
   return null;
@@ -697,6 +831,26 @@ function extractGmailMoney(subject, text) {
   if (/unstoppable domains/i.test(haystack) || /notifications@unstoppabledomains\.com/i.test(haystack)) {
     const unstoppableMatch = extractUnstoppableMoney(haystack);
     if (unstoppableMatch.amount) return unstoppableMatch;
+  }
+
+  if (/dynadot/i.test(haystack) || /orders@dynadot\.com/i.test(haystack)) {
+    const dynadotMatch = extractDynadotMoney(haystack);
+    if (dynadotMatch.amount) return dynadotMatch;
+  }
+
+  if (/namesilo\.com receipt|support@namesilo\.com|thank you for your order/i.test(haystack)) {
+    const namesiloMatch = extractNameSiloMoney(haystack);
+    if (namesiloMatch.amount) return namesiloMatch;
+  }
+
+  if (/spaceship|order summary|final cost|initial charge|receipts@spaceship\.com/i.test(haystack)) {
+    const spaceshipMatch = extractSpaceshipMoney(haystack);
+    if (spaceshipMatch.amount) return spaceshipMatch;
+  }
+
+  if (/sav\.com receipt|support@sav\.com|paid on/i.test(haystack)) {
+    const savMatch = extractSavMoney(haystack);
+    if (savMatch.amount) return savMatch;
   }
 
   const labeledAmount =
@@ -711,6 +865,207 @@ function extractGmailMoney(subject, text) {
   }
 
   return { amount: "", currency: "" };
+}
+
+function extractDynadotMoney(text) {
+  const body = normalizeGmailText(text);
+  if (!body) {
+    return { amount: "", currency: "" };
+  }
+
+  const total =
+    matchAmountByLabel(body, ["total", "order total", "purchase amount", "amount paid", "amount due"]) ||
+    matchAmountByLabel(body, ["price", "subtotal", "grand total", "charge", "payment"]);
+  if (total) return total;
+
+  const candidateLines = body
+    .split("\n")
+    .filter((line) => /domain\s+registration|domain\s+renewal|order\s+finished|invoice|receipt|renewal|transfer/i.test(line));
+  const searchSpace = candidateLines.length ? candidateLines.join("\n") : body;
+
+  const lineAmounts = [...searchSpace.matchAll(/(?:USD|US\$|\$)\s*([0-9][0-9,]*(?:\.[0-9]{2})?)/gi)];
+  if (lineAmounts.length) {
+    return {
+      amount: lineAmounts[lineAmounts.length - 1][1],
+      currency: "$",
+    };
+  }
+
+  const lastCurrency = [...body.matchAll(/(?:USD|US\$|\$)\s*([0-9][0-9,]*(?:\.[0-9]{2})?)/gi)];
+  if (lastCurrency.length) {
+    return {
+      amount: lastCurrency[lastCurrency.length - 1][1],
+      currency: "$",
+    };
+  }
+
+  return { amount: "", currency: "" };
+}
+
+function extractNameSiloMoney(text) {
+  const body = normalizeGmailText(text);
+  if (!body) {
+    return { amount: "", currency: "" };
+  }
+
+  const orderTotal =
+    matchAmountByLabel(body, ["order total", "total", "amount due", "grand total", "amount paid"]) ||
+    matchAmountByLabel(body, ["sub total", "subtotal"]);
+  if (orderTotal) return orderTotal;
+
+  const candidateLines = body
+    .split("\n")
+    .filter((line) => /namesilo|order total|tax info|registration|thank you for your order|receipt/i.test(line));
+  const searchSpace = candidateLines.length ? candidateLines.join("\n") : body;
+
+  const lineAmounts = [...searchSpace.matchAll(/(?:USD|US\$|\$)\s*([0-9][0-9,]*(?:\.[0-9]{2})?)/gi)];
+  if (lineAmounts.length) {
+    return {
+      amount: lineAmounts[lineAmounts.length - 1][1],
+      currency: "$",
+    };
+  }
+
+  return { amount: "", currency: "" };
+}
+
+function extractSpaceshipMoney(text) {
+  const body = normalizeGmailText(text);
+  if (!body) {
+    return { amount: "", currency: "" };
+  }
+
+  const total =
+    matchAmountByLabel(body, ["final cost", "total", "order total", "amount due", "amount paid"]) ||
+    matchAmountByLabel(body, ["initial charge", "price", "charge"]);
+  if (total) return total;
+
+  const candidateLines = body
+    .split("\n")
+    .filter((line) => /spaceship|order summary|payment details|final cost|initial charge|your items/i.test(line));
+  const searchSpace = candidateLines.length ? candidateLines.join("\n") : body;
+
+  const lineAmounts = [...searchSpace.matchAll(/(?:USD|US\$|\$)\s*([0-9][0-9,]*(?:\.[0-9]{2})?)/gi)];
+  if (lineAmounts.length) {
+    return {
+      amount: lineAmounts[lineAmounts.length - 1][1],
+      currency: "$",
+    };
+  }
+
+  return { amount: "", currency: "" };
+}
+
+function extractSavMoney(text) {
+  const body = normalizeGmailText(text);
+  if (!body) {
+    return { amount: "", currency: "" };
+  }
+
+  const total =
+    matchAmountByLabel(body, ["total", "amount", "paid", "purchase amount", "amount paid", "amount due"]) ||
+    matchAmountByLabel(body, ["item", "charge", "price"]);
+  if (total) return total;
+
+  const candidateLines = body
+    .split("\n")
+    .filter((line) => /sav\.com|receipt|auto renewal|renewal|paid on|transaction id/i.test(line));
+  const searchSpace = candidateLines.length ? candidateLines.join("\n") : body;
+
+  const lineAmounts = [...searchSpace.matchAll(/(?:USD|US\$|\$)\s*([0-9][0-9,]*(?:\.[0-9]{2})?)/gi)];
+  if (lineAmounts.length) {
+    return {
+      amount: lineAmounts[lineAmounts.length - 1][1],
+      currency: "$",
+    };
+  }
+
+  return { amount: "", currency: "" };
+}
+
+function extractSavPurchaseDate(text) {
+  const body = normalizeGmailText(text);
+  if (!body) return "";
+
+  const paidOnMatch = body.match(/Paid on\s+(\d{1,2}\/\d{1,2}\/\d{4})(?:\s+\d{1,2}:\d{2}\s*(?:am|pm))?/i);
+  if (paidOnMatch?.[1]) {
+    return normalizeDateValue(paidOnMatch[1]);
+  }
+
+  const dateMatch = body.match(/Paid on\s+([A-Za-z]{3,9}\s+\d{1,2},\s+\d{4})/i);
+  if (dateMatch?.[1]) {
+    return normalizeDateValue(dateMatch[1]);
+  }
+
+  return "";
+}
+
+function normalizeBulkUnstoppablePurchaseAmount({ subject, text, transactionType, money }) {
+  if (transactionType !== "purchase") return money;
+  if (!isUnstoppableReceipt(subject, text)) return money;
+  const itemCount = countUnstoppablePurchasedItems(text);
+  if (!Number.isInteger(itemCount) || itemCount <= 1) return money;
+
+  const amountValue = parseGmailMoneyValue(money?.amount);
+  if (amountValue === null) return money;
+
+  const perDomainAmount = amountValue / itemCount;
+  if (!Number.isFinite(perDomainAmount) || perDomainAmount <= 0) return money;
+
+  return {
+    amount: perDomainAmount.toFixed(2),
+    currency: money?.currency || "$",
+  };
+}
+
+function isUnstoppableReceipt(subject, text) {
+  const haystack = `${subject || ""}\n${text || ""}`;
+  return /unstoppable domains/i.test(haystack) || /notifications@unstoppabledomains\.com/i.test(haystack);
+}
+
+function isSavReceipt(subject, text) {
+  const haystack = `${subject || ""}\n${text || ""}`;
+  return /sav\.com receipt|support@sav\.com|paid on|transaction id/i.test(haystack);
+}
+
+function countUnstoppablePurchasedItems(text) {
+  const body = String(text || "");
+  const productBlock = extractUnstoppableProductBlock(body);
+  const searchSpace = productBlock || body;
+  const lines = searchSpace.split("\n").map((line) => normalizeGmailText(line));
+  const itemLines = lines.filter((line) =>
+    /(?:^|\b)(?:dns\s+domain|domain\s+renewal|transfer|registration)\s*:/i.test(line) &&
+    /\b(?:[a-z0-9-]+\.)+[a-z]{2,}\b/i.test(line) &&
+    !/^(products\s+purchased|order id|payment method|order amount|sales tax|credits\/discounts|total|thanks|thank you|billing details|payment processing fee)/i.test(line),
+  );
+
+  if (itemLines.length) return itemLines.length;
+
+  const compact = searchSpace.replace(/\s+/g, " ").replace(/[•*•]/g, " ").trim();
+  const compactMatches = compact.match(/\b(?:dns\s+domain|domain\s+renewal|transfer|registration)\s*:\s*(?:[a-z0-9-]+\.)+[a-z]{2,}\b/gi);
+  return Array.isArray(compactMatches) ? compactMatches.length : 0;
+}
+
+function extractUnstoppableProductBlock(body) {
+  const lines = String(body || "").split("\n");
+  const startIndex = lines.findIndex((line) => /products\s+purchased/i.test(line));
+  if (startIndex === -1) return "";
+
+  const collected = [];
+  for (let index = startIndex; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (!collected.length && /products\s+purchased/i.test(line)) {
+      collected.push(line);
+      continue;
+    }
+
+    if (/^(dns contact verification|order id|payment method|order amount|sales tax|credits\/discounts|total|thanks|thank you|billing details|payment processing fee)/i.test(line)) {
+      break;
+    }
+
+    collected.push(line);
+  }
+  return collected.join("\n").trim();
 }
 
 function parseGmailMoneyValue(value) {
@@ -753,6 +1108,24 @@ function matchLabeledMoney(text, labels) {
   return null;
 }
 
+function matchAmountByLabel(text, labels) {
+  for (const label of labels) {
+    const pattern = new RegExp(
+      String.raw`${escapeRegExp(label)}\s*:?\s*(?:USD|US\$|\$)\s*([0-9][0-9,]*(?:\.[0-9]{2})?)`,
+      "i",
+    );
+    const match = String(text || "").match(pattern);
+    if (match?.[1]) {
+      return { amount: match[1], currency: "$" };
+    }
+  }
+  return null;
+}
+
+function looksLikeRawGmailQuery(value) {
+  return /from:|subject:|label:|category:|after:|before:|newer_than:|older_than:|\(|\)|"/i.test(value);
+}
+
 function isGmailAuthError(error) {
   const message = error instanceof Error ? error.message : String(error);
   return /HTTP 401|HTTP 403|HTTP 400|Unauthorized|Forbidden|invalid_grant|invalid_token/i.test(message);
@@ -783,8 +1156,10 @@ function countMatchedDomains(domains) {
   return domains.reduce((count, domain) => {
     const matched =
       Boolean(domain?.purchaseAmount !== "" && domain?.purchaseAmount !== null && domain?.purchaseAmount !== undefined) ||
+      Boolean(domain?.transferAmount !== "" && domain?.transferAmount !== null && domain?.transferAmount !== undefined) ||
       Boolean(domain?.renewalAmount !== "" && domain?.renewalAmount !== null && domain?.renewalAmount !== undefined) ||
       Boolean(domain?.purchaseDate) ||
+      Boolean(domain?.transferDate) ||
       Boolean(domain?.renewalDate);
     return matched ? count + 1 : count;
   }, 0);

@@ -2,6 +2,7 @@
 .env.*
 !.env.example
 .gmail-tokens.json
+.domain-ledger-state.json
 client_secret_*.json
 .DS_Store
 node_modules

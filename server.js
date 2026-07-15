@@ -14,6 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = __dirname;
 const host = process.env.HOST || "127.0.0.1";
+const ledgerStatePath = path.join(root, ".domain-ledger-state.json");
 
 loadDotEnv(path.join(root, ".env"));
 
@@ -161,6 +162,21 @@ async function handleDomainSync(res) {
     const registrarResult = await getRegistrarDomains();
     let domains = registrarResult.domains;
     const providerErrors = [...registrarResult.providerErrors];
+    const ledgerState = loadLedgerState();
+    const removalResult = detectRemovedDomains({
+      previousProviderDomains: ledgerState.previousProviderDomains,
+      currentProviderDomains: registrarResult.providerDomains,
+      providerErrors,
+      existingRemovedDomains: ledgerState.removedDomains,
+    });
+
+    const nextLedgerState = {
+      previousProviderDomains: removalResult.nextPreviousProviderDomains,
+      removedDomains: removalResult.removedDomains,
+      lastSyncAt: new Date().toISOString(),
+      lastDomainCount: domains.length,
+    };
+    saveLedgerState(nextLedgerState);
 
     const gmailResult = await fetchGmailDomainLedger(domains);
     domains = gmailResult.domains;
@@ -169,6 +185,7 @@ async function handleDomainSync(res) {
       source: ["dynadot", "namesilo", "sav", "spaceship", "unstoppable", "gmail"],
       count: domains.length,
       domains,
+      removedDomains: removalResult.removedDomains,
       providerErrors,
       providers: {
         ...registrarResult.providers,
@@ -256,4 +273,125 @@ function parseJson(body) {
   } catch {
     return {};
   }
+}
+
+function loadLedgerState() {
+  if (!existsSync(ledgerStatePath)) {
+    return {
+      previousProviderDomains: {},
+      removedDomains: [],
+      lastSyncAt: "",
+      lastDomainCount: 0,
+    };
+  }
+
+  try {
+    const parsed = parseJson(readFileSync(ledgerStatePath, "utf8"));
+    return {
+      previousProviderDomains: isPlainObject(parsed?.previousProviderDomains) ? parsed.previousProviderDomains : {},
+      removedDomains: Array.isArray(parsed?.removedDomains) ? parsed.removedDomains : [],
+      lastSyncAt: typeof parsed?.lastSyncAt === "string" ? parsed.lastSyncAt : "",
+      lastDomainCount: Number.isFinite(Number(parsed?.lastDomainCount)) ? Number(parsed.lastDomainCount) : 0,
+    };
+  } catch {
+    return {
+      previousProviderDomains: {},
+      removedDomains: [],
+      lastSyncAt: "",
+      lastDomainCount: 0,
+    };
+  }
+}
+
+function saveLedgerState(state) {
+  writeFileSync(ledgerStatePath, `${JSON.stringify(state, null, 2)}\n`);
+}
+
+function detectRemovedDomains({
+  previousProviderDomains,
+  currentProviderDomains,
+  providerErrors,
+  existingRemovedDomains,
+}) {
+  const now = new Date().toISOString();
+  const nextPreviousProviderDomains = {};
+  const removedDomains = Array.isArray(existingRemovedDomains) ? [...existingRemovedDomains] : [];
+  const failedProviders = new Set((providerErrors || []).map((item) => normalizeProviderName(item?.provider)));
+
+  for (const [providerKey, currentDomains] of Object.entries(currentProviderDomains || {})) {
+    const normalizedProvider = normalizeProviderName(providerKey);
+    const currentList = Array.isArray(currentDomains) ? currentDomains : [];
+    const previousList = Array.isArray(previousProviderDomains?.[providerKey]) ? previousProviderDomains[providerKey] : [];
+
+    if (failedProviders.has(normalizedProvider)) {
+      nextPreviousProviderDomains[providerKey] = previousList;
+      continue;
+    }
+
+    nextPreviousProviderDomains[providerKey] = currentList;
+
+    const currentNames = new Map(
+      currentList
+        .filter((domain) => domain?.name)
+        .map((domain) => [normalizeDomainName(domain.name), domain]),
+    );
+
+    for (const previousDomain of previousList) {
+      const domainName = previousDomain?.name;
+      if (!domainName) continue;
+
+      if (!currentNames.has(normalizeDomainName(domainName))) {
+        removedDomains.unshift({
+          name: domainName,
+          registrar: previousDomain.registrar || previousDomain.source || providerLabel(providerKey),
+          source: previousDomain.source || providerLabel(providerKey),
+          removedAt: now,
+        });
+      }
+    }
+  }
+
+  const dedupedRemovedDomains = dedupeRemovalEvents(removedDomains).slice(0, 100);
+  dedupedRemovedDomains.sort((a, b) => Date.parse(b.removedAt) - Date.parse(a.removedAt));
+
+  return {
+    nextPreviousProviderDomains,
+    removedDomains: dedupedRemovedDomains,
+  };
+}
+
+function dedupeRemovalEvents(events) {
+  const seen = new Set();
+  const deduped = [];
+
+  for (const event of events) {
+    const key = `${normalizeDomainName(event?.name)}|${normalizeProviderName(event?.registrar || event?.source)}|${event?.removedAt || ""}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(event);
+  }
+
+  return deduped;
+}
+
+function normalizeDomainName(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function normalizeProviderName(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function providerLabel(providerKey) {
+  const normalized = normalizeProviderName(providerKey);
+  if (normalized === "dynadot") return "Dynadot";
+  if (normalized === "namesilo") return "NameSilo";
+  if (normalized === "sav") return "Sav";
+  if (normalized === "spaceship") return "Spaceship";
+  if (normalized === "unstoppable") return "Unstoppable";
+  return providerKey;
+}
+
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }

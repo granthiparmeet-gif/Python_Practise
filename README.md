@@ -5,10 +5,10 @@ Single-page MVP for tracking:
 - domain inventory
 - renewals and purchases
 - registrar spending
-- Gmail receipt parsing
+- local history for recently removed domains
 - merged registrar sync from Dynadot, NameSilo, and Unstoppable Domains
 - merged registrar sync from Dynadot, NameSilo, Sav, Spaceship, and Unstoppable Domains
-- Gmail OAuth + acquisition cost extraction
+- Gmail OAuth + acquisition cost extraction from Dynadot, NameSilo, Sav, Spaceship, and Unstoppable receipts
 - one-time backend Gmail setup via `npm run gmail:setup`
 
 ## Run
@@ -21,7 +21,8 @@ Single-page MVP for tracking:
 
 ## Current State
 
-- localStorage-backed UI state
+- server-backed UI state
+- local history file for removed domains
 - merged domain list from five providers
 - provider failures are isolated
 - backend server that reads local `.env`
