@@ -2,7 +2,7 @@ import http from "node:http";
 import { createReadStream, existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { getRegistrarDomains } from "./registrars/index.js";
+import { getRegistrarDomains, mergeDomains } from "./registrars/index.js";
 import {
   buildGoogleAuthUrl,
   fetchGmailDomainLedger,
@@ -160,12 +160,29 @@ server.listen(port, host, () => {
 async function handleDomainSync(res) {
   try {
     const registrarResult = await getRegistrarDomains();
-    let domains = registrarResult.domains;
-    const providerErrors = [...registrarResult.providerErrors];
     const ledgerState = loadLedgerState();
+    const dynadotCurrent = Array.isArray(registrarResult.providerDomains?.dynadot)
+      ? registrarResult.providerDomains.dynadot
+      : [];
+    const dynadotPrevious = Array.isArray(ledgerState.previousProviderDomains?.dynadot)
+      ? ledgerState.previousProviderDomains.dynadot
+      : [];
+    const dynadotFallbackUsed = dynadotCurrent.length === 0 && dynadotPrevious.length > 0;
+    const displayProviderDomains = {
+      ...registrarResult.providerDomains,
+      dynadot: dynadotFallbackUsed ? dynadotPrevious : dynadotCurrent,
+    };
+    let domains = mergeDomains(
+      displayProviderDomains.dynadot || [],
+      displayProviderDomains.namesilo || [],
+      displayProviderDomains.sav || [],
+      displayProviderDomains.spaceship || [],
+      displayProviderDomains.unstoppable || [],
+    );
+    const providerErrors = [...registrarResult.providerErrors];
     const removalResult = detectRemovedDomains({
       previousProviderDomains: ledgerState.previousProviderDomains,
-      currentProviderDomains: registrarResult.providerDomains,
+      currentProviderDomains: displayProviderDomains,
       providerErrors,
       existingRemovedDomains: ledgerState.removedDomains,
     });
@@ -189,6 +206,7 @@ async function handleDomainSync(res) {
       providerErrors,
       providers: {
         ...registrarResult.providers,
+        dynadot: { ...registrarResult.providers.dynadot, cachedFallbackUsed: dynadotFallbackUsed },
         gmail: gmailResult.summary,
       },
     });
@@ -317,11 +335,17 @@ function detectRemovedDomains({
   const nextPreviousProviderDomains = {};
   const removedDomains = Array.isArray(existingRemovedDomains) ? [...existingRemovedDomains] : [];
   const failedProviders = new Set((providerErrors || []).map((item) => normalizeProviderName(item?.provider)));
+  const activeDomainKeys = new Set();
 
   for (const [providerKey, currentDomains] of Object.entries(currentProviderDomains || {})) {
     const normalizedProvider = normalizeProviderName(providerKey);
     const currentList = Array.isArray(currentDomains) ? currentDomains : [];
     const previousList = Array.isArray(previousProviderDomains?.[providerKey]) ? previousProviderDomains[providerKey] : [];
+
+    for (const domain of currentList) {
+      if (!domain?.name) continue;
+      activeDomainKeys.add(`${normalizedProvider}|${normalizeDomainName(domain.name)}`);
+    }
 
     if (failedProviders.has(normalizedProvider)) {
       nextPreviousProviderDomains[providerKey] = previousList;
@@ -351,7 +375,14 @@ function detectRemovedDomains({
     }
   }
 
-  const dedupedRemovedDomains = dedupeRemovalEvents(removedDomains).slice(0, 100);
+  const reconciledRemovedDomains = removedDomains.filter((event) => {
+    const providerKey = normalizeProviderName(event?.registrar || event?.source);
+    const domainKey = normalizeDomainName(event?.name);
+    if (!providerKey || !domainKey) return true;
+    return !activeDomainKeys.has(`${providerKey}|${domainKey}`);
+  });
+
+  const dedupedRemovedDomains = dedupeRemovalEvents(reconciledRemovedDomains).slice(0, 100);
   dedupedRemovedDomains.sort((a, b) => Date.parse(b.removedAt) - Date.parse(a.removedAt));
 
   return {

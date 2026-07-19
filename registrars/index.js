@@ -611,7 +611,7 @@ function extractSpaceshipDomains(payload) {
     .filter(Boolean);
 }
 
-function mergeDomains(...lists) {
+export function mergeDomains(...lists) {
   const merged = dedupeDomains(lists.flat());
   return merged.sort((a, b) => a.name.localeCompare(b.name));
 }
