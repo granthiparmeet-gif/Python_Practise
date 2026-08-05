@@ -89,8 +89,8 @@
 # print(bool(None))
 
 
-age = 20
-is_license = True
+# age = 20
+# is_license = True
 
 # print (age<18 or is_license)
 
@@ -258,3 +258,316 @@ city = "Aurangabad"
 
 
 # name =
+# name = """Parmeet SIngh, I am a software engineer, 
+# I work from hoime, 
+# I am doing good in life"""
+
+# print(name.split())
+
+# name = "parmeet    singh"
+
+# print(name.split(" "))
+
+
+# word1 = ["Parmeet Singh", "is a great man", "such a succesful and happy man"]
+
+
+# word3 = ",".join(word1)
+
+# print(word3)
+
+# word2=[2,3,4,5]
+
+# word4="".join(word2)
+
+# print(word4)
+
+
+# lines=[
+#     "hi ",
+#     "howa are you",
+#     "I am good"
+# ]
+
+# word="\n".join(lines)
+
+# print(word)
+
+
+# text = "I am Parmeet Singh"
+
+# spliter =  text.split(" ")
+
+# print(spliter)
+
+# wow = "-".join(spliter)
+
+# print(wow)
+
+# date= "2026-08-12"
+
+# # expected op = 12/08/2026
+
+
+# split = date.split("-")
+# print(split)
+# split.reverse()
+# print(split)
+# print("/".join(split))
+
+
+# date = "2026-4-12"
+
+# work = date.split("-")
+# reverse = work[::-1]
+# print(reverse)
+
+
+# word= "i love Python"
+
+# print(word.find("love"))
+
+# print(word.find("java"))
+
+# print(word.count(
+#     "o"
+# ))
+
+
+# file = "harshjot.png"
+
+# print(file.startswith("har"))
+
+# print(file.startswith("arsh"))
+
+# print(file.endswith(".png"))
+
+
+# word = "Python Python"
+
+# print(word.find("Python"))
+
+
+# username = "parmeet@gmail.com"
+
+
+# if username.find("@") !=0 :
+#     print(True)
+
+
+# x = username.split("@")
+# print(len(x[0]))
+
+# if username.endswith("gmail.com"):
+#     print("IS GMAIL : True")
+
+
+# name = "Parmeet"
+# age = "30"
+
+# print("My name is " +name +" And my age is "+age+ " I am a good man")
+
+# print(f"My name is {name}. And my age is {age}, the sume is {name+age}")
+
+# a=40
+# b=50
+
+# print(f"{a+b}")
+
+
+# name = "parmeet"
+
+# print(name.upper())
+
+# name = "parmeet"
+# age = 30
+# x=3.176784
+
+
+# print(f"My anme is {name.upper()}, and my age is {age}")
+
+# print(f"The number is {x:.3f}")
+
+
+# print("C\Parmeet\Singh")
+# print(r"C\Parmeet \Singh")
+
+
+# word = "python"
+
+# print(word[::-1])
+
+
+# word = "I am good"
+
+# lista = ["Banna", 2, True, False, "Apple"]
+
+
+# print(lista[2])
+# print(lista[1])
+
+# lista[0]="Harsh"
+
+# print(lista)
+
+
+# lista = ["Parmeet", 33, "Java", True]
+
+# print(id(lista))
+# print(id(lista[2]))
+
+# print(lista)
+
+# lista[2]="Python"
+
+# print(lista)
+# print(id(lista))
+# print(id(lista[2]))
+
+
+
+
+# print(id(numbers))
+# print(numbers[0])
+
+# print(numbers[-2])
+
+# print(numbers[1+2])
+
+# b = numbers[:]
+
+# print(id(b))
+
+# numbers.append(65)
+
+# print(numbers)
+# numbers = [10, 20, 30, 40, 50, 60,70,80,45]
+# print(numbers)
+# print(id(numbers))
+
+
+# b = list(numbers)
+
+# print(b)
+# numbers.extend([38,33])
+
+# print(numbers)
+
+# numbers.insert(0,31)
+
+# print(numbers)
+
+
+# numbers.remove(5)
+
+# numbers.pop(1)
+
+# numbers.clear()
+
+# print(numbers)
+
+# del numbers[1:3]
+
+# print(numbers)
+
+# pol = numbers.copy()
+
+# print(id(pol))
+
+
+# pondi = numbers[:]
+
+# print(id(pondi))
+
+
+# a = [[1,2],[3,4]]
+
+# b=a.copy()
+
+# print(a)
+# print(b)
+
+
+# import copy
+
+# b=copy.deepcopy(a)
+
+
+# numbers = [[1,2,3],[4,5,6],[7,8,9]]
+# numbers[1][2]=1001
+
+# print(numbers)
+
+# for row in numbers:
+#     print(row)
+
+
+# for row in numbers:
+#     for z in row:
+#         print(z)
+
+
+# matrix = [[[0]*3] for _ in range(3)]
+
+# print(matrix)
+
+
+# numbers = [6,8,9,3,6,2,34,56]
+
+# numbers.sort()
+
+# print(numbers)
+
+
+# x=sorted(numbers)
+
+# print(x)
+
+
+# numbers.reverse()
+
+# print(numbers)
+
+# numbers.sort(reverse=True)
+
+# print(numbers)
+
+
+# print(numbers.index(9))
+
+# print(numbers.count(6))
+
+
+# x = ["Alice", "Bob", "Charlie"]
+
+# result = [names.upper() for names in x ]
+
+# print(result)
+
+
+# numbers = ["10","20","30"]
+
+# result = [int(x) for x in numbers]
+# print(result)
+
+
+# numbers = [1,2,3,4,5,6]
+
+
+# result = [x for x in numbers if x%2==0]
+
+# print(result)
+
+
+# words = ["AI","Python","C","Java"]
+
+# res = [x for x in words if len(x)>2]
+
+# print(res)
+
+# results = [x for x in range (1,11)]
+
+# print(results)
+
+
+print(numbers for numbers in range())
