@@ -570,4 +570,31 @@ city = "Aurangabad"
 # print(results)
 
 
-print(numbers for numbers in range())
+# print([numbers for numbers in range(10,0,-1)])
+
+
+# print(list(range(5)))
+
+
+# x = print(list(range(0)))
+
+
+# result = [0 for _ in range(11)]
+
+# print(result)
+
+# print(type(x))
+
+
+# print(type(range(5)))
+
+tup = (2,3,4,51,43,12)
+
+print(tup[1])
+print(len(tup))
+
+print(type(tup))
+
+tup[3]=233
+
+print(tup)
