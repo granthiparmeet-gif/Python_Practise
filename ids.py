@@ -588,13 +588,238 @@ city = "Aurangabad"
 
 # print(type(range(5)))
 
-tup = (2,3,4,51,43,12)
+# tup = (2,3,4,51,43,12)
 
-print(tup[1])
-print(len(tup))
+# print(tup[1])
+# print(len(tup))
 
-print(type(tup))
+# print(type(tup))
 
-tup[3]=233
+# tup[3]=233
 
-print(tup)
+# print(tup)
+
+
+# student = (
+#     "Parmeet",
+#     33,
+#     "AI Engineer"
+# )
+
+
+# print(student[2])
+
+
+# empty = "AI"
+
+# x = list(empty)
+
+
+# print(x)
+
+
+# tup = (23,43,12,31,44)
+
+# print(tup[1:])
+
+
+# tup = ([3,5], 4,7,8)
+
+# tup[0].insert(0,10)
+
+# print(tup)
+
+
+# engineer = ("Parmeet", "33", "Computers")
+
+# name,age,branch = engineer
+
+# print("Name is : ", name)
+# print("Age is: ", age)
+# print("Branch is :", branch)
+
+
+
+# numbers = (3,4,1,5,3,4,5)
+
+# # start,*end, finish=numbers
+
+# # print(end)
+
+# numbers.sort()
+
+# print(numbers)
+
+
+# seta = {"Apple", "Bannana", "Grapes", "Angoor", "Apple", "Bannana"}
+
+# print(seta)
+
+
+# print(type(set()))
+# letters = set("banana")
+
+# print(letters)
+
+# x = set()
+
+# x.add("abc@gmail.com")
+# x.add("def@gmail.com")
+# x.add("abc@gmail.com")
+
+# print(x)
+
+
+# seta = {[2,3], [5,8]}
+
+# print(seta)
+
+# nums = [5, 2, 5, 1, 2, 9, 1, 8]
+
+
+# seta = set(nums)
+
+# print(seta)
+
+
+# seta.update([3,25,3])
+
+# print(seta)
+
+
+# A= {2,3,4,5,1,3,6,2,4}
+# B = 7,9,11,16,29
+
+# # print(A)
+# # print(B)
+
+
+#  C= {}
+#  print(type(C))
+
+# D=set()
+# print(type(D))
+
+# print(A)
+
+# letters = set("banana")
+# print(letters)
+
+
+# numbers = {1,2,3,4}
+# print(numbers[0])
+
+
+
+#  numbers = {1,4,2,3,5,1,2,[5,6]}
+#  print(numbers)
+
+
+#  a = {4,3,5}
+#  print(4 in a)
+#  print(2 in a)
+
+# A.add(B)
+
+# print(A)
+
+
+# A = {"mango", "pineapple"}
+
+
+# A.add("Apple")
+
+# A.add("Donkey")
+
+# print(A)
+
+
+# A. update([76,89,20])
+
+# print(A)
+
+
+# letters = set()
+# letters.add("Mango")
+# print(letters)
+# letters = {"Quber"}
+# letters.update(["Mango","Apple", "Pineapple", "DOsa"])
+# print(letters)
+
+# # letters.remove("Quber")
+# # print(letters)
+
+
+# # letters.discard("Parmeet")
+# # letters.discard("Apple",)
+# # print(letters)
+
+# # letters.pop()
+# # print(letters
+
+# letters.clear()
+# print(letters)
+
+
+# a = {5,3,6,7}
+
+# b = a.copy()
+
+# print(b)
+
+
+# A = {23, 47,82,0}
+# B = {65,47,82,76}
+
+# print(A|B)
+# print(A.union(B))
+
+# print(A&B)
+# print(B.intersection(A))
+
+# print(A-B)
+# print(B-A)
+
+# print(A^B)
+
+
+# store_a = {101, 102, 103, 104, 105}
+# store_b = {104, 105, 106, 107}
+
+# print(store_a|store_b)
+# print(store_a&store_b)
+# print(store_a-store_b)
+# print(store_b-store_a)
+# print(store_a^store_b)
+
+
+# a = {5,8}
+# b = {5,8}
+
+# print(b<=a)
+# print(a<=b)
+# print(a>=b)
+
+
+# a= {5,8}
+# b={2,3}
+
+# print(a.isdisjoint(b))
+
+
+# print(hash(10))
+
+# print(hash("hello"))
+
+# seta=frozenset({23,43,56,87})
+
+
+# seta.add(72)
+
+# print(seta)
+
+user = {
+    "name":"Parmeet"
+}
+
+
