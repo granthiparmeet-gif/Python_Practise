@@ -818,8 +818,323 @@ city = "Aurangabad"
 
 # print(seta)
 
-user = {
-    "name":"Parmeet"
-}
+# user = {
+#     "name":"Parmeet",
+#     "age":33,
+#     "age":34,
+#     "Roll_no":16,
+#     "location":"Aurangabad"
+# }
 
+
+# print(user["Roll_noo"])
+
+
+# user = {}
+
+# seta= set()
+
+# print(type(user))
+# print(type(seta))
+
+# user_1 = {
+#     "name":"Parmeet",
+#     "address": {
+#         "house_no":8,
+#         "locality":"Devanagri"
+#     },
+#     frozenset([5,6]) : "Hello"
+# }
+# user_1["name"] = "Kaustube"
+# print(user_1["address"]["locality"])
+# print(user_1["name"])
+# user_1['address']['landmark']="Burande office"
+
+# print(user_1)
+# print(user_1[frozenset([5,6])])
+# print(user_1[frozenset([5, 6])])
+
+# print(user_1.get("name"))
+# print(user_1.get("name","kausar"))
+# print(user_1.get("address").get("locality"))
+
+
+# print(user_1.keys())
+# print(user_1.values())
+# print(user_1.items())
+
+
+# for key,value in user_1.items():
+#     print(key,":",value)
+
+
+# print("email" in user_1)
+
+# print("Hello" in user_1.values())
+
+
+# user = {
+#     "name": "Parmeet"
+# }
+
+# user["age"] = 23
+
+# print(user)
+
+# user["age"] = 27
+
+
+# print(user)
+
+# user.update(
+#     surname="Granthi",
+#     middle="Jagdish"
+# )
+
+# print(user)
+
+# for key,value in user.items():
+#     print(key,":", value)
+
+# print(user.pop("name"))
+# print(user)
+# print(user.pop("email", "No_email"))
+
+# user.popitem()
+# print(user)
+
+# del user["middle"]
+# user.clear()
+# print(user)
+
+
+# for key in user:
+#     print(key)
+
+# for value in user.values():
+#     print(value)
+
+# for key,value in user.items():
+#     print(f"{key}:{value}")
+
+# print("name" in user)
+
+# print("Parmeet" in user.values())
+
+
+# for key,value in user.items():
+#     if key == "age":
+#         print(value)
+
+
+# scores = {
+#     "Alice": 90,
+#     "Bob": 65,
+#     "Charlie": 85,
+#     "David": 50
+# }
+
+# for name,score in scores.items():
+#     if score>=80:
+#         print(name)
+
+# users = {
+#     "u1": "Alice",
+#     "u2": "Bob",
+#     "u3": "Charlie"
+# }
+# if "u4" in users:
+#         print("Id Found")
+# else:
+#     print("Id not Found")
+
+# if "Alice" in users.values():
+#       print("Name not found")
+
+
+# for key in list(users):
+#     if key == "u1":
+#         del users["u1"]
+
+# print(users)
+
+
+# for index,(id,name) in enumerate(users.items(), start=12):
+#     print(index,id,name)
+
+# for key in reversed(users):
+#     print(key)
+
+
+# for key,value in reversed(users.items()):
+#     print(key,value)
+
+
+# student = {
+#     "name":"Parmeet",
+#     "age":32,
+#     "address": {
+#         "house_no": 33,
+#         "street": "Jabinda Residency",
+#         "room details":
+#         {
+#             "floor":1,
+#             "room_no.": 2
+#         }
+#     }
+# }
+
+# print(student["address"]["room details"]["room_no."])
+
+
+# print(student.get("address").get("room details").get("room_no."))
+
+
+# response = {
+#     "status": "success",
+#     "data": {
+#         "users": [
+#             {"name": "Alice", "age": 25},
+#             {"name": "Bob", "age": 30}
+#         ]
+#     }
+# }
+
+
+# # print(response["data"]["users"][1]["name"])
+
+
+# response["data"]["users"].append({"name":"Parmeet", "age":98})
+
+# print(response)
+
+
+# response["code_no"]=4542
+
+# print(response)
+
+
+# user = {
+#     "name": "Alice",
+#     "address": {
+#         "city": "Delhi",
+#         "pincode": 400001
+#     }
+# }
+
+# city = user.get("address").get("city")
+
+# print(city)
+
+
+# address = user.get("address")
+
+# if address:
+#     city = address.get("city")
+
+# print(city)
+
+# print(user.get("addresses", {}).get("city"))
+
+
+# print(user["address"]["city"])
+
+
+# users = {
+#     "u1": {
+#         "name": "Alice",
+#         "age": 25
+#     },
+#     "u2": {
+#         "name": "Bob",
+#         "age": 30
+#     }
+# }
+
+
+# for id,item in users.items():
+#     for key,value in item.items():
+#         print(key,value)
+
+# orders = {
+#     "customer": "Alice",
+#     "orders": [
+#         {
+#             "id": 101,
+#             "product": "MacBook",
+#             "price": 150000
+#         },
+#         {
+#             "id": 102,
+#             "product": "AirPods",
+#             "price": 20000
+#         }
+#     ]
+# }
+
+# print(orders["orders"][0]["product"])
+
+
+# print({n:n*n for n in range(1,6)})
+
+# print([n**2 for n in range(1,6)])
+
+# names = ["Alice", "Bob", "Charlie"]
+# ages = [25, 30, 28]
+
+# print({name:age for name,age in zip(names,ages)})
+
+# prices = {
+#     "apple": 100,
+#     "banana": 50,
+#     "mango": 150
+# }
+
+# new_items = {fruit:round(price*1.5,2) for fruit,price in prices.items()}
+
+
+
+# print(new_items)
+
+# scores = {
+#     "Alice": 90,
+#     "Bob": 65,
+#     "Charlie": 85,
+#     "David": 50
+# }
+
+# passed = { name:score for name,score in scores.items() if score>=80}
+
+# print(passed)
+
+
+# new = {x:"even" if x%2==0 else "odd" for x in range(1,11)}
+
+# print(new)
+
+# users = [
+#     {"id": 101, "name": "Alice"},
+#     {"id": 102, "name": "Bob"},
+#     {"id": 103, "name": "Charlie"}
+# ]
+
+# new_dict = {user["id"]:user["name"] for user in users}
+
+# print(new_dict)
+
+
+# user = {
+#     "name":"Parmeet",
+#     "age":56
+# }
+
+# user.setdefault("age",25)
+
+# print(user)
+
+from collections import defaultdict
+
+scores = defaultdict(int)
+
+print(scores["Alice"])
 
