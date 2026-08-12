@@ -1132,9 +1132,498 @@ city = "Aurangabad"
 
 # print(user)
 
-from collections import defaultdict
+# from collections import defaultdict
 
-scores = defaultdict(int)
+# scores = defaultdict(int)
 
-print(scores["Alice"])
+# print(scores["Alice"])
 
+
+
+# a=-10
+# b=8
+
+
+# print(a//b)
+
+# print(a%b)
+
+
+# x="hello"
+# y="world"
+
+
+# print(x and y)
+
+
+
+
+
+# x = [2,3,4,1]
+
+# print(3 in x)
+
+
+# dictia = {
+
+#     "name":"Parmeet",
+#     "roll_no":26
+# }
+
+
+# print("name" in dictia)
+
+
+# a = (x=x+5)
+
+# x+=5
+
+
+# vl = 23
+
+# vl+=7
+
+# print(vl)
+
+
+# x =10
+
+# x += 1
+
+# print(x)
+
+# x=+1
+
+# print(x)
+
+
+
+# words = ["apple", "banana", "apple", "mango", "banana", "apple"]
+
+
+
+# count= {}
+# for word in words:
+#     if word not in count:
+#         count[word] =0
+
+#     count[word]+=1
+
+
+# scores = {
+
+#     "Param":98,
+#     "Parmeet":67,
+#     "Jagmeet":99
+# }
+
+# max_scorer = max(scores, key = scores.get)
+
+# print(max_scorer)
+
+
+# score = 75
+
+
+# if score >90:
+#     print("This is A grade")
+# elif score<=90 and score>75:
+#     print("this is B grade")
+# elif 60<score<=75:
+#     print("This is C grade")
+# else:
+#     print("This is D grade")
+
+
+# name = ""
+
+
+# if not name:
+#     print("name doesnt exist")
+
+
+# age = 18
+# has_licence = True
+
+# status = "Can drive" if age>=18 else "Cannot Drive"
+
+# print(status)
+
+
+# names = "Alice"
+
+
+# for name in names:
+#     print(name)
+
+
+# user = {
+#     "name":"Parmeet",
+#     "age": 34
+# }
+
+
+# for key,value in user.items():
+#     print(f"{key}:{value}")
+
+
+# for x in range(1,11):
+#     print(x)
+
+# for x in range (10):
+#     print(x)
+
+
+# for x in range(5,1,-1):
+#     print(x)
+#     print(type(x))
+
+
+# print(type(range(2,5)))
+
+
+# for i, in enumerate(range(1,11)):
+#     print (i)
+
+# fruits = ["Mango", "Apple", "Banana", "Pineapple"]
+
+# for i,fruit in enumerate(fruits, start=11):
+#     print(f"The index is {i} and the fruit is {fruit}")
+
+
+# numbers = [10,21,34,53,67,88]
+
+
+# for number in numbers:
+#     if number%2==0:
+#         print(number)
+
+# print([number for number in numbers if number%2==0])
+
+
+# squares= [x**2 for x in numbers]
+
+# print(squares)
+
+
+# for numbers in range(11):
+#     if numbers ==5:
+#         continue
+
+#     print(numbers)
+
+
+
+# [number for number in range(5) if number<7 else number is not]
+
+
+# x= [number for number in range(5) else print("number done")]
+
+
+# for number in range(5):
+#     print(number)
+# else:
+#     print("Finished Loop")
+
+
+
+
+# for i in range(3):
+#     for j in range(5):
+#         print(i,j)
+
+
+# departments = {
+#     "AI": ["Alice", "Bob"],
+#     "Backend": ["Charlie", "David"]
+# }
+
+# for depart, names in departments.items():
+#     for name in names:
+#         print(name, depart)
+
+
+
+# for text in "Python":
+#     print(text)
+
+
+
+# for i,letter in enumerate("household", start=1):
+#     if letter=="e":
+#         print(f"found the letter e at {i}")
+
+
+# documents = [
+#     {"title": "Python", "score": 0.92},
+#     {"title": "RAG", "score": 0.87},
+#     {"title": "History", "score": 0.31}
+# ]
+
+
+# x = [document["title"] for document in documents if document["score"]>0.9]
+
+# print(x)
+
+
+# count=1
+
+# while count<6:
+#     print(count)
+#     count+=1
+
+
+# while True:
+#     user_input = input("Enter your query here")
+
+#     if user_input=="q":
+#         break
+
+#     print("You entered", user_input)
+
+# count=1
+
+# while count<10:
+#     if count==6:
+#         break
+#     count+=1
+
+#     print(count)
+
+
+
+# count = 1
+
+# while count<=10:
+#     if count == 7:
+#             continue
+#     print(count)
+
+    
+
+#     count+=1
+
+
+# count = 1
+
+# while count <= 10:
+
+#     if count == 6:
+#         break
+
+#     print(count)
+#     count += 1
+
+    
+count =1
+
+
+# while count<10:
+#     count+=1
+
+#     if count==5:
+#         continue
+#     print(count)
+
+
+# password = ""
+
+# while password != "password123":
+#     password = input("Enter your password")
+
+# print("Access Granted")
+
+# user_input=""
+# while user_input != "quit":
+#     user_input = input("Command: ")
+    
+# count = 1
+
+# while count<3:
+#     print(count)
+#     count+=1
+
+# else:
+#     print("Loop finished")
+
+
+
+# queue = ["Java", "Python", "C"]
+
+
+# while queue:
+#     lang = queue.pop(0)
+#     print("the language is ", lang)
+
+
+# numbers = [10, 15, 20, 25, 30]
+# even_number=[]
+
+
+# for number in numbers:
+#     if number %2==0:
+#         even_number.append(number)
+
+# print(even_number)
+
+# numbers = [1,2,3,4]
+
+# sq = [number**2 for number in numbers]
+
+# print(sq)
+
+
+# numbers = [10, 20, 30, 40]
+
+
+# total = 0
+
+# for n in numbers:
+#     total +=n
+
+# print(total)
+
+
+# numbers = [10, 15, 20,35, 25, 30]
+
+# found = False
+# for n in numbers:
+#     if n==35:
+#         found=True
+#         break
+# print(found)
+
+# numbers = [5, 12, 7, 25, 30]
+
+# for number in numbers:
+#     if number > 20:
+#         print(number)
+
+
+# numbers = [10, 50, 20, 80, 30]
+
+# largest = numbers[0]
+# for n in numbers:
+#     if n>largest:
+#         largest=n
+# print(largest)
+
+
+# smallest = numbers[0]
+
+# for n in numbers:
+#     if n<smallest:
+#         smallest=n
+# print(smallest)
+
+# print(max(numbers))
+# print(min(numbers))
+
+# numbers = [1, 2, 3, 4, 5, 6]
+
+# create squares of only even numbers
+
+# evsq=[]
+
+# for n in numbers:
+#     if n%2==0:
+#         p=n**2
+#         evsq.append(p)
+
+# print(evsq)
+
+
+# scores = {
+#     "Alice": 90,
+#     "Bob": 65,
+#     "Charlie": 85
+# }
+
+# for name,score in scores.items():
+#     if score>70:
+#         print(f"{name} is passed")
+
+# users = [
+#     {
+#         "name": "Alice",
+#         "skills": ["Python", "RAG"]
+#     },
+#     {
+#         "name": "Bob",
+#         "skills": ["FastAPI", "Docker"]
+#     }
+# ]
+
+
+# for user in users:
+#     for skill in user["skills"]:
+#         print(user["name"],skill)
+
+# for user in users:
+#     for skill in user["skill"]
+
+
+# for user in users:
+#     for skill in user["skills"]:
+#         print(user["name"], skill)
+
+
+# for user in users:
+#     for skill in user["skills"]:
+#         print(user["name"], skill)
+    
+
+# users = ["Alice", "Bob", "Charlie", "David"]
+
+
+# for user in users:
+#     if user == "Charlie":
+#         print("User Found")
+#         break
+
+
+# numbers = [10,-5,20,-3,30]
+
+
+# for number in numbers:
+#     if number < 0:
+#         continue
+
+#     print(number)
+
+# names = ["Alice", "Bob", "Charlie"]
+
+
+# result = {name:len(name) for name in names}
+    
+# names = ["Alice", "Bob", "Charlie"]
+# scores = [90, 80, 95]
+
+
+# result = {name:score for name,score in zip(names,scores)}
+
+# print(result)
+
+
+# users = [
+#     {
+#         "name": "Alice",
+#         "skills": ["Python", "RAG"]
+#     },
+#     {
+#         "name": "Bob",
+#         "skills": ["FastAPI", "Docker"]
+#     }
+# ]
+
+
+# for user in users:
+#     for skill in user["skills"]:
+#         print(skill)
+    
+
+# def square(n:int):
+#     return n*n
+
+# print(square(3))
+# print(square(4))
