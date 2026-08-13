@@ -1627,3 +1627,279 @@ count =1
 
 # print(square(3))
 # print(square(4))
+
+
+# def greet(name):
+#     print(f"Hello {name}")
+
+# greet("Parmeet")
+
+# greet("Jagmeet")
+
+
+# def statement(a,b,e):
+#     return a+b-e
+
+# print(statement(5,9,4))
+
+# print(statement(20,60,10))
+
+
+# def add(r,s):
+#     return r+s
+
+# y = add(3,4)
+
+# print(add(y,6))
+
+# def test():
+#     print(4)
+#     return
+#     print(8)
+
+
+# test()
+
+
+# def operation(a,b):
+#     return a+b, a-b
+
+# sum, dif =operation(3,4)
+
+# print(f"Sum is {sum} and difference is {dif}")
+
+
+
+# def greet(name :str ="Guest" ):
+#     print(f"Hello {name}")
+
+# greet("Parmeet")
+# greet()
+
+
+# def greet(id=54 , name="Parmeet"):
+#     print(f"Hey {name}, your id is {id}")
+
+
+# greet(98,name="kaustube")
+
+
+# def check_score(score:int):
+#     if score<65:
+#         print("Student Failed")
+#     else:
+#         print("Student Passed")
+
+# check_score(73)
+
+
+#sum of numbers of given list
+
+# list1 = [3,4,2,6,7,1]
+# list2 = [4,3,5,2,1]
+
+# def sum_of_list(x:list):
+#     sum=0
+#     for n in x:
+#         sum+=n
+#     return sum
+
+
+# print(sum_of_list(list1))
+# print(sum_of_list(list2))
+
+
+# def add_item(item , items=None):
+#     if items is None:
+#         items = []
+
+#     items.append(item)
+#     print(items)
+
+
+
+# add_item("A")
+# add_item("B")
+
+# def add(*args):
+#     print(sum(args))
+
+# add(10,20,30)
+
+
+# def sub(*args):
+#     print(sum(args))
+
+# sub(67,54,71)
+
+
+# def add(*args):
+#     total = 0
+
+#     for n in args:
+#         total += n
+
+#     return total
+
+
+
+
+# print(add(10, 20))
+# print(add(10, 20, 30))
+# print(add(1, 2, 3, 4, 5))
+
+
+# def test(*args):
+#     print(type(args))
+
+# test(1,2,3)
+
+
+# def greet(greeting,*names):
+#     for name in names:
+#         print(f"{greeting} Hello {name}")
+
+# greet("Hi","karan", "param", "Bonie")
+
+
+# def info(**kwargs):
+#     print(kwargs)
+#     print(type(kwargs))
+
+# info(name="Parmeet",
+#      age=33,
+#      adress = "Balaji Nagar")
+
+
+
+
+# def show_info(**kwargs):
+#     for key,value in kwargs.items():
+#         print(f"The {key} is {value}")
+
+
+
+# show_info(
+#     name="Alice",
+#     age=25,
+#     city="Delhi"
+# )
+
+# def example(*args,**kwargs):
+#     for arg in args:
+#         print(arg)
+#     for k,g in kwargs.items():
+#         print(f"{k}:{g}")
+
+
+# example(
+#     10,
+#     20,
+#     name="Alice",
+#     age=25
+# )
+
+
+
+# def sum (name,*args,**kwargs):
+#     print(f"name: {name},args: {args},kwargs: {kwargs}")
+
+# sum("alice", "beta",2,3, age=23, roll=42)
+
+
+
+# numbers = [23,54,2,34,43]
+
+# print(*numbers)
+
+
+# user = {
+#     "name": "Alice",
+#     "age": 25
+# }
+
+# print(**user)
+
+
+# square = lambda x:x**2
+
+
+# print(square(3))
+
+
+# users = [
+#     {"name": "Alice", "age": 30},
+#     {"name": "Bob", "age": 20}
+# ]
+
+
+# users.sort(key = lambda user:user["age"])
+
+
+# print(users)
+
+
+# def sumation (a:int,b:int) -> list[int]:
+#     su = []
+    
+
+# print(sumation(2,3))
+
+# adde = lambda x,y:x+y
+
+
+# print(adde(3,4))
+
+
+
+# def greet(name):
+#     """This greets the users"""
+#     return f"Hello {name}"
+
+# print(greet.__doc__)
+
+# say_hello = greet
+
+# print(say_hello("Kaustube"))
+
+
+# def square(x):
+#     return x**2
+
+# def apply_function(func,value):
+#     return func(value)
+
+# print(apply_function(square,5))
+
+
+# x = [23,63,82,98,76,4,91]
+
+# y = sorted(x, reverse = True)
+
+# x =[5,3,8,9,1,3]
+
+
+# y = x.sort(reverse=True)
+
+# print(y)
+
+# x is y
+
+# print(x is y)
+
+# print(max(x))
+
+# print(min(x))
+
+
+# for i, name in enumerate(x, start = 10):
+#     print(i, name)
+
+
+# names = ["alice", "bob", "charlie", "danny"]
+# marks = [23, 46,54,43]
+
+# for i, j in zip(names, marks):
+#     print(f"Name is {i} and marks are : {j}")
+
+
