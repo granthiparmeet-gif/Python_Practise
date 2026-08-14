@@ -1903,3 +1903,189 @@ count =1
 #     print(f"Name is {i} and marks are : {j}")
 
 
+# numbers = [23,35,43,54]
+
+# print(any(x for x in numbers if x%2==0))
+
+
+# print(all(x%2!=0 for x in numbers))
+
+
+# print(abs(-50-40))
+
+
+# print(round(-3.14543,2))
+
+# print(round(-9.49))
+
+
+# numbers = [3,1,2,4,5]
+
+# x.reverse()
+
+# print(x)
+
+
+# print(isinstance(x, (dict, list)))
+
+# y = list(map(lambda x : x**2 , numbers))
+
+# print(y)
+
+
+# print(list(filter(lambda x:x%2==0, numbers)))
+
+
+# def greet():
+#     message = "Hello"
+    
+
+# # print(message)
+
+# greet()
+
+# def calculate():
+#     total = 100
+#     print(total)
+
+# calculate()
+# print(total)
+
+
+# name ="Parmeet"
+
+# def greet():
+#     return f"This is Local {name}"
+
+
+# print(greet())
+# print(f"This is the Global {name}")
+
+
+# count = 10
+
+# def counting():
+#     global count
+#     count+=1
+#     print(count)
+
+
+# counting()
+# print(count)
+
+
+# from fastapi import FastAPI
+# from pydantic import BaseModel
+
+# from math import Calculator
+
+
+# import calculator
+
+# print(calculator.add(10, 5))
+
+
+# from calcy.calcy1.calculator import add
+
+
+# from addition import *
+
+# print(add(5,3))
+
+
+# import math
+# import random as parmeet
+# print(parmeet.randint(1,11))
+
+
+
+# print(__name__)
+
+# x=10
+# y=0
+
+# print(10+"x")
+
+
+# numbers = [10,20,30]
+
+# print(numbers[5])
+
+# user = {"name":"Parmeet"}
+
+# print(user["name"])
+# print(user["age"])
+
+# print(username)
+
+# numbers = [1, 2, 3]
+
+# numbers.upper()
+
+
+# try:
+#     result =10/0
+# except ZeroDivisionError:
+#     print("Zero Division Error")
+
+
+# try:
+#     age = int(input("Enter the age: "))
+# except ValueError:
+#     print("The value Entered is not an integer")
+
+
+# try:
+#     number = int(input("Enter the age: "))
+#     result = 100/number
+# except ValueError:
+#     print("The Entered number is not an integer")
+# except ZeroDivisionError:
+#     print("This number cant be divided by zero")
+
+
+# try:
+#     number = int(input("Enter the age: "))
+#     result = 100/number
+# except(ValueError, TypeError):
+#     print("Invalid input")
+
+# try:
+#     number = int(input("Enter the age : "))
+# except(ValueError, TypeError):
+#     print("Invalid input")
+# else:
+#     print("Conversation succesful")
+# finally:
+#     print("Loop Finished")
+
+
+# file = None
+
+# try:
+#     file = open("fruits.txt")
+# finally:
+#     if file:
+#         file.close()
+
+
+# age = -5
+
+# if age<0:
+#     raise ValueError("Age cannot be negative")
+
+# try:
+#     result = 10 / 0
+
+# except ZeroDivisionError:
+#     print("Logging error")
+#     raise
+
+# try:
+#     int("Hello")
+# except Exception as e:
+#     print(e)
+#     print(type(e))
+
+
+# x = open("addition.py", "read")
