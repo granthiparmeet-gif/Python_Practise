@@ -2089,3 +2089,170 @@ count =1
 
 
 # x = open("addition.py", "read")
+
+
+# file = open("factorial_at_base.py", "r")
+
+# content = file.read()
+
+# print(content)
+
+# file.close()
+
+
+# file = open("factorial_at_base.py", "r")
+
+# line = file.readline()
+
+# print(5,line)
+
+# file.close()
+
+
+# file = open("factorial_at_base.py", "r")
+
+# lines = file.readlines()
+
+# print(lines)
+
+# file = open("factorial_at_base.py", "r")
+
+# for line in file:
+#     print(line)
+
+# file.close()
+
+
+# file = open("addition.py", "w")
+
+# file.write("Hello World.\n How are you?")
+
+# file.close()
+
+
+
+# file = open("addition.py","a")
+
+# file.write("\nI am doing good")
+# file.close()
+
+# with open("factorial_at_base.py","r") as file:
+#     x = file.readlines()
+
+# print(x)
+
+
+# with open("addition.py", "a") as file:
+#     file.write("Are you free tonight?")
+
+# from pathlib import Path
+
+
+# path = Path("calcy")/"calcy1"/"calculator.py"
+
+# print(path.is_file())
+
+# print(path.exists())
+
+# print(path.read_text())
+
+
+# print(path.write_text("hey"))
+
+# print(path.read_text())
+
+
+# import json
+
+# user = {
+#     "name":"Parmeet",
+#     "age":33
+# }
+
+# data = json.dumps(user)
+
+
+# print(data)
+
+# print(type(data))
+
+
+# new_user = json.loads(data)
+
+# print(new_user)
+
+# print(type(new_user))
+
+
+# with open("addition.py","r",encoding="utf-8") as file:
+#     print(file.read())
+
+
+# def outer():
+#     message ="Hello"
+
+#     def inner():
+#         print(message)
+#     inner()
+# outer()
+
+
+# x = "global"
+# def outer():
+#     # x = "outer"
+#     def inner():
+#         # x = "inner"
+#         print(x)
+#     inner()
+
+# outer()
+
+
+# x = 10
+
+# def test():
+#     global x
+#     print(x)
+#     x = 20
+
+# test()
+
+
+
+# class car():
+#     pass
+
+# car()
+
+
+# class Student():
+
+#     def __init__(self, name, age):
+#         self.name = name
+#         self.age =age
+
+# student1 = Student("Parmeet", 34)
+# student2 = Student("Kaustubh", 40)
+
+# print(student1)
+# print(student2)
+
+
+class Student():
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def greet(self):
+        return f"Hi how are you {self.name}"
+
+
+student1 = Student("Parmeet", 33)
+student2 = Student("Kaustubh", 44)
+
+
+
+print(student1.greet())
+
+
+print(student1.name)
