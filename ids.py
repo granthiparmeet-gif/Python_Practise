@@ -2238,21 +2238,109 @@ count =1
 # print(student2)
 
 
-class Student():
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
+# class Student():
+#     def __init__(self, name, age):
+#         self.name = name
+#         self.age = age
 
-    def greet(self):
-        return f"Hi how are you {self.name}"
-
-
-student1 = Student("Parmeet", 33)
-student2 = Student("Kaustubh", 44)
+#     def greet(self):
+#         return f"Hi how are you {self.name}"
 
 
+# student1 = Student("Parmeet", 33)
+# student2 = Student("Kaustubh", 44)
 
-print(student1.greet())
 
 
-print(student1.name)
+# print(student1.greet())
+
+
+# print(student1.name)
+
+
+# class Animal():
+
+#     nails = 6
+#     def eating(self):
+#         print("Animals can be veg or nonveg eaters")
+
+# class Cat(Animal):
+#     def scratch(self):
+#         print("This will scratch you")
+
+#     def eating(self):
+#         super().eating()
+#         print("Cat is a non veg eater")
+
+
+# cat = Cat()
+# print(cat.eating())
+# print(cat.nails)
+
+# Animal.nails=7
+# print(cat.nails)
+
+
+# class Cat():
+#     def __init__(self, name):
+#         self.name = name
+
+#     # def __str__(self):
+#     #     return f"The name is {self.name}"
+
+#     def __repr__(self):
+#         return f"The name is {self.name}"
+
+# cat = Cat("Billu")
+
+# print(cat)
+
+# class Team:
+#     def __init__(self, players):
+#         self.players= players
+#     def __len__(self):
+#         return len(self.players)
+
+
+# team = Team(["Alice", "Bob", "Danny", "Charlie"])
+
+# print(len(team))
+
+# class Team:
+#     age = 33
+
+#     def __init__(self,name):
+#         self.name = name
+
+#     @classmethod
+#     def hello(cls,age):
+#         cls.age = age
+
+
+# numbers = [10,20,30,40]
+
+# it = iter(numbers)
+
+# print(next(it))
+# print(next(it))
+# print(next(it))
+# print(next(it))
+
+
+# def count():
+#     yield 1
+#     yield 2
+#     yield 3
+
+# for x in count():
+#     print(x)
+
+
+# def hello():
+#     print("Hello")
+
+# print("I am good")
+# @hello()
+# print("How are you?")
+
+
