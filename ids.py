@@ -2344,3 +2344,36 @@ count =1
 # print("How are you?")
 
 
+
+
+# def greet(fx):
+#     def mdfx(a,b):
+#         print("hello")
+#         fx(a,b)
+#         print("Bye")
+
+#     return mdfx
+
+
+# def greet(fx):
+#     def modify(a,b):
+#         print("Hi, How are you?")
+#         fx(a,b)
+#         print("Bye this is done")
+
+#     return modify
+
+# @greet
+# def add(a,b):
+#     print (a+b)
+
+# add(2,3)
+
+
+
+
+# @greet
+# def subtract(a,b):
+#     print(a-b)
+
+# subtract(3,2)
