@@ -2377,3 +2377,104 @@ count =1
 #     print(a-b)
 
 # subtract(3,2)
+
+# import time
+
+# def timer(fx):
+#     def wrapper(*args, **kwargs):
+#         start = time.time()
+#         fx(*args, **kwargs)
+#         end = time.time()
+#         print("total time", end - start)
+#         return end
+#     return wrapper
+
+# @timer
+# def hello(name):
+#     print(f"Hello {name}")
+
+# hello("Parmeet Singh")
+
+
+# square = lambda x : x*x
+
+# print(square(5))
+
+
+# cube = lambda x:x**3
+
+# print(cube(3))
+
+
+# add = lambda a,b:a+b
+
+# print(add(2,3))
+
+
+# number = [3,5,2,6]
+
+# x = map(lambda x : x**2, number)
+
+# print(list(x))
+
+# x = filter(lambda x : x%2 ==0, number)
+
+# print(list(x))
+
+# from functools import reduce
+
+# x = reduce(lambda a,b:a+b , number)
+
+# print(x)
+
+
+# people = [
+#     ("John", 33), 
+#     ("David", 45),
+#     ("Marq", 76)
+# ]
+
+# people.sort(key = lambda x : x[1])
+
+# print(people)
+
+
+# def double(x):
+#     return x**2
+
+# number = [2,3,4]
+
+# x = map(double, number)
+
+# print(list(x))
+
+# from contextlib import contextmanager
+
+
+# def add(a:int = 2, b:int =3) ->dict[str:int] | None:
+#     return a+b
+
+
+# print(add(3))
+
+
+from dataclasses import dataclass
+
+@dataclass
+class Student:
+    name: str
+    age: int
+
+    def greet(self):
+        return f"Hello {self.name}, my age is {self.age}"
+
+p = Student("Parmeet", 23)
+
+print(p.greet())
+
+
+
+
+
+
+
