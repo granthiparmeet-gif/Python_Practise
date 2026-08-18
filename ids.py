@@ -2458,19 +2458,72 @@ count =1
 # print(add(3))
 
 
-from dataclasses import dataclass
+# from dataclasses import dataclass
 
-@dataclass
-class Student:
-    name: str
-    age: int
+# @dataclass
+# class Student:
+#     name: str
+#     age: int
 
-    def greet(self):
-        return f"Hello {self.name}, my age is {self.age}"
+#     def greet(self):
+#         return f"Hello {self.name}, my age is {self.age}"
 
-p = Student("Parmeet", 23)
+# p = Student("Parmeet", 23)
 
-print(p.greet())
+# print(p.greet())
+
+# import time
+# import asyncio
+
+# async def function1():
+#     await asyncio.sleep(3)
+#     print ("Function 1")
+
+# async def function2():
+#     await asyncio.sleep(5)
+#     print ("Function 2")
+
+
+import asyncio
+
+
+async def function1():
+    await asyncio.sleep(6)
+    print ("Function 1")
+
+async def function2():
+    await asyncio.sleep(3)
+    print ("Function 2")
+
+import asyncio
+import time 
+
+async def function1():
+    start = time.time()
+    await asyncio.sleep(5)
+    end = time.time()
+
+    total = end - start
+    print(total)
+
+async def function2():
+    start = time.time()
+    await asyncio.sleep(6)
+    end = time.time()
+
+    total = end - start
+    print(total)
+
+
+async def main():
+    asyncio.gather(
+        function1(), 
+        function2()
+    )
+
+
+asyncio.run(main())
+
 
 
 
