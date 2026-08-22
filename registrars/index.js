@@ -1,95 +1,76 @@
+import { getPrimaryMailbox, mapRegistrarAccountToMailbox } from "../data/mailboxes.js";
+
 const dynadotBaseUrl = () => process.env.DYNADOT_BASE_URL || "https://api.dynadot.com";
 const namesiloBaseUrl = () => process.env.NAMESILO_BASE_URL || "https://www.namesilo.com/api";
-const savBaseUrl = () => process.env.SAV_BASE_URL || "https://api.sav.com";
 const spaceshipBaseUrl = () => process.env.SPACESHIP_BASE_URL || "https://spaceship.dev/api";
 const unstoppableBaseUrl = () => process.env.UD_API_BASE_URL || "https://api.unstoppabledomains.com";
-const unstoppableResellerBaseUrl = () => `${unstoppableBaseUrl()}/partner/v3`;
 
+/** Registrar APIs: presence confirmation + expiry dates (spend still comes from Gmail). */
 export async function getRegistrarDomains() {
   const settled = await Promise.allSettled([
     fetchDynadotDomains(),
     fetchNameSiloDomains(),
-    fetchSavDomains(),
     fetchSpaceshipDomains(),
     fetchUnstoppableDomains(),
-    fetchUnstoppableBillingTransactions(),
   ]);
 
   const dynadotResult = settled[0];
   const namesiloResult = settled[1];
-  const savResult = settled[2];
-  const spaceshipResult = settled[3];
-  const unstoppableResult = settled[4];
-  const unstoppableBillingResult = settled[5];
+  const spaceshipResult = settled[2];
+  const unstoppableResult = settled[3];
 
   const dynadotDomains = dynadotResult.status === "fulfilled" ? dynadotResult.value : [];
   const namesiloDomains = namesiloResult.status === "fulfilled" ? namesiloResult.value : [];
-  const savDomains = savResult.status === "fulfilled" ? savResult.value : [];
   const spaceshipDomains = spaceshipResult.status === "fulfilled" ? spaceshipResult.value : [];
   const unstoppableDomains = unstoppableResult.status === "fulfilled" ? unstoppableResult.value : [];
-  const unstoppableBillingTransactions =
-    unstoppableBillingResult.status === "fulfilled" ? unstoppableBillingResult.value : [];
-  const domains = mergeDomains(
-    dynadotDomains,
-    namesiloDomains,
-    savDomains,
-    spaceshipDomains,
-    unstoppableDomains,
-  );
-  const mergedDomains = applyUnstoppableBillingPrices(domains, unstoppableBillingTransactions);
+  const domains = mergeDomains(dynadotDomains, namesiloDomains, spaceshipDomains, unstoppableDomains);
   const providerErrors = [];
 
   if (dynadotResult.status === "rejected") {
     providerErrors.push({
       provider: "Dynadot",
-      error: dynadotResult.reason instanceof Error ? dynadotResult.reason.message : String(dynadotResult.reason),
+      error: formatProviderError(dynadotResult.reason),
     });
   }
   if (namesiloResult.status === "rejected") {
     providerErrors.push({
       provider: "NameSilo",
-      error: namesiloResult.reason instanceof Error ? namesiloResult.reason.message : String(namesiloResult.reason),
-    });
-  }
-  if (savResult.status === "rejected") {
-    providerErrors.push({
-      provider: "Sav",
-      error: savResult.reason instanceof Error ? savResult.reason.message : String(savResult.reason),
+      error: formatProviderError(namesiloResult.reason),
     });
   }
   if (spaceshipResult.status === "rejected") {
     providerErrors.push({
       provider: "Spaceship",
-      error: spaceshipResult.reason instanceof Error ? spaceshipResult.reason.message : String(spaceshipResult.reason),
+      error: formatProviderError(spaceshipResult.reason),
     });
   }
   if (unstoppableResult.status === "rejected") {
     providerErrors.push({
       provider: "Unstoppable",
-      error: unstoppableResult.reason instanceof Error ? unstoppableResult.reason.message : String(unstoppableResult.reason),
-    });
-  }
-  if (unstoppableBillingResult.status === "rejected") {
-    providerErrors.push({
-      provider: "Unstoppable Billing",
-      error: unstoppableBillingResult.reason instanceof Error ? unstoppableBillingResult.reason.message : String(unstoppableBillingResult.reason),
+      error: formatProviderError(unstoppableResult.reason),
     });
   }
 
   return {
-    domains: mergedDomains,
+    domains,
     providerDomains: {
       dynadot: dynadotDomains,
       namesilo: namesiloDomains,
-      sav: savDomains,
       spaceship: spaceshipDomains,
       unstoppable: unstoppableDomains,
     },
     providerErrors,
     providers: {
-      dynadot: { ok: dynadotResult.status === "fulfilled", count: dynadotDomains.length },
+      dynadot: {
+        ok: dynadotResult.status === "fulfilled",
+        count: dynadotDomains.length,
+        accounts: listDynadotAccounts().map((account) => ({
+          label: account.label,
+          mailbox: account.mailboxHint || "",
+        })),
+        extraKeysConfigured: listDynadotAccounts().filter((account) => account.label !== "primary").length,
+      },
       namesilo: { ok: namesiloResult.status === "fulfilled", count: namesiloDomains.length },
-      sav: { ok: savResult.status === "fulfilled", count: savDomains.length },
       spaceship: { ok: spaceshipResult.status === "fulfilled", count: spaceshipDomains.length },
       unstoppable: { ok: unstoppableResult.status === "fulfilled", count: unstoppableDomains.length },
     },
@@ -97,16 +78,141 @@ export async function getRegistrarDomains() {
 }
 
 async function fetchDynadotDomains() {
-  const apiKey = process.env.DYNADOT_API_KEY;
-  if (!apiKey) return [];
+  const accounts = listDynadotAccounts();
+  if (!accounts.length) return [];
 
+  const settled = await Promise.allSettled(
+    accounts.map((account) => fetchDynadotDomainsForKey(account)),
+  );
+
+  const merged = [];
+  const errors = [];
+  for (let i = 0; i < settled.length; i += 1) {
+    const result = settled[i];
+    const account = accounts[i];
+    if (result.status === "fulfilled") {
+      merged.push(...result.value);
+      continue;
+    }
+    errors.push(
+      `${account.label}: ${formatProviderError(result.reason)}`,
+    );
+  }
+  if (errors.length && !merged.length) {
+    throw new Error(errors.join(" | "));
+  }
+  // Partial success is OK (e.g. primary works, letsliterate key not added yet).
+  return dedupeDomains(merged);
+}
+
+/**
+ * Primary Dynadot key plus extras from env — never hardcoded to one Gmail.
+ *
+ *   DYNADOT_API_KEYS=letsliterate@gmail.com=KEY,third@gmail.com=KEY
+ *   DYNADOT_API_KEY_LETSLITERATE=...   (legacy alias, still works)
+ *   DYNADOT_API_KEY_<LABEL>=...        (LABEL maps via REGISTRAR_ACCOUNT_MAP)
+ */
+export function listDynadotAccounts() {
+  const accounts = [];
+  const seenKeys = new Set();
+  const primary = String(process.env.DYNADOT_API_KEY || "").trim();
+  if (primary) {
+    accounts.push({
+      label: "primary",
+      apiKey: primary,
+      mailboxHint: getPrimaryMailbox(),
+    });
+    seenKeys.add(primary);
+  }
+
+  for (const extra of extraDynadotAccounts()) {
+    if (!extra.apiKey || seenKeys.has(extra.apiKey)) continue;
+    seenKeys.add(extra.apiKey);
+    accounts.push(extra);
+  }
+  return accounts;
+}
+
+function extraDynadotAccounts() {
+  const extras = [];
+  const blob = String(process.env.DYNADOT_API_KEYS || "").trim();
+  if (blob) {
+    for (const part of blob.split(/[\n,]+/)) {
+      const text = part.trim();
+      if (!text) continue;
+      const eq = text.indexOf("=");
+      const colon = text.indexOf(":");
+      const sep = eq >= 0 ? eq : colon;
+      if (sep <= 0) continue;
+      const mailboxRaw = text.slice(0, sep).trim();
+      const apiKey = text.slice(sep + 1).trim();
+      if (!apiKey) continue;
+      const mailboxHint = mapRegistrarAccountToMailbox(mailboxRaw) || normalizeMailbox(mailboxRaw);
+      extras.push({
+        label: localLabel(mailboxHint || mailboxRaw),
+        apiKey,
+        mailboxHint,
+      });
+    }
+  }
+
+  for (const [envKey, envValue] of Object.entries(process.env)) {
+    if (!envKey.startsWith("DYNADOT_API_KEY_") || envKey === "DYNADOT_API_KEYS") continue;
+    const apiKey = String(envValue || "").trim();
+    if (!apiKey) continue;
+    const label = envKey.replace(/^DYNADOT_API_KEY_/, "").toLowerCase();
+    const mailboxHint = mapRegistrarAccountToMailbox(label);
+    extras.push({
+      label,
+      apiKey,
+      mailboxHint,
+    });
+  }
+
+  const legacy = String(process.env.DYNADOT_LETSLITERATE_API_KEY || "").trim();
+  if (legacy) {
+    extras.push({
+      label: "letsliterate",
+      apiKey: legacy,
+      mailboxHint: mapRegistrarAccountToMailbox("letsliterate"),
+    });
+  }
+  return extras;
+}
+
+function normalizeMailbox(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase();
+}
+
+function localLabel(value) {
+  const key = normalizeMailbox(value);
+  return key.includes("@") ? key.split("@")[0] : key || "extra";
+}
+
+export function dynadotApiConfiguredForMailbox(mailbox) {
+  const email = normalizeMailbox(mailbox);
+  if (!email) return false;
+  return listDynadotAccounts().some((account) => normalizeMailbox(account.mailboxHint) === email);
+}
+
+/** @deprecated Use dynadotApiConfiguredForMailbox */
+export function isLetsLiterateDynadotApiConfigured() {
+  return dynadotApiConfiguredForMailbox(mapRegistrarAccountToMailbox("letsliterate"));
+}
+
+async function fetchDynadotDomainsForKey(account) {
   const response = await fetch(
-    `${dynadotBaseUrl()}/api3.json?key=${encodeURIComponent(apiKey)}&command=list_domain&count_per_page=1000&page_index=1&sort=NameAsc`,
+    `${dynadotBaseUrl()}/api3.json?key=${encodeURIComponent(account.apiKey)}&command=list_domain&count_per_page=1000&page_index=1&sort=NameAsc`,
   );
   if (!response.ok) {
-    throw new Error(`Dynadot list_domain returned HTTP ${response.status}`);
+    throw new Error(`Dynadot list_domain (${account.label}) returned HTTP ${response.status}`);
   }
-  return extractDynadotDomains(await response.json());
+  return extractDynadotDomains(await response.json(), {
+    mailboxHint: account.mailboxHint,
+    dynadotAccount: account.label,
+  });
 }
 
 async function fetchNameSiloDomains() {
@@ -126,25 +232,6 @@ async function fetchNameSiloDomains() {
     throw new Error(`NameSilo listDomains returned HTTP ${response.status}: ${raw.slice(0, 500)}`);
   }
   return extractNameSiloDomains(parseJson(raw));
-}
-
-async function fetchSavDomains() {
-  const apiKey = process.env.SAV_API_KEY;
-  if (!apiKey) return [];
-
-  const response = await fetch(`${savBaseUrl()}/domains_api_v1/get_active_domains_in_account`, {
-    method: "GET",
-    headers: {
-      APIKEY: apiKey,
-      Accept: "application/json",
-    },
-  });
-
-  const raw = await response.text();
-  if (!response.ok) {
-    throw new Error(`Sav get_active_domains_in_account returned HTTP ${response.status}: ${raw.slice(0, 500)}`);
-  }
-  return extractSavDomains(parseJson(raw));
 }
 
 async function fetchSpaceshipDomains() {
@@ -189,40 +276,7 @@ async function fetchUnstoppableDomains() {
   return dedupeDomains(extractUnstoppableDomains(parseJson(raw)));
 }
 
-async function fetchUnstoppableBillingTransactions() {
-  const apiKey = process.env.UD_MCP_API_KEY;
-  if (!apiKey) return [];
-
-  const attempts = [
-    {
-      Authorization: `Bearer ${apiKey}`,
-      Accept: "application/json",
-    },
-    {
-      "x-api-key": apiKey,
-      Accept: "application/json",
-    },
-  ];
-
-  for (const headers of attempts) {
-    const response = await fetch(`${unstoppableResellerBaseUrl()}/account/billing/transactions`, {
-      method: "GET",
-      headers,
-    });
-
-    const raw = await response.text();
-    if (response.ok) {
-      return extractUnstoppableBillingTransactions(parseJson(raw));
-    }
-    if (response.status !== 401 && response.status !== 403) {
-      throw new Error(`Unstoppable billing transactions returned HTTP ${response.status}: ${raw.slice(0, 500)}`);
-    }
-  }
-
-  return [];
-}
-
-function extractDynadotDomains(payload) {
+function extractDynadotDomains(payload, options = {}) {
   const mainDomains =
     payload?.ListDomainInfoResponse?.MainDomains ||
     payload?.ListDomainInfoResponse?.ListDomainInfoContent?.DomainInfoList ||
@@ -247,13 +301,10 @@ function extractDynadotDomains(payload) {
         name,
         source: "Dynadot",
         registrar: "Dynadot",
-        status: domain.Status || "unknown",
         expiry: formatDynadotTimestamp(domain.Expiration),
         registration: formatDynadotTimestamp(domain.Registration),
-        privacy: domain.Privacy || "-",
-        renewOption: domain.RenewOption || "-",
-        nameservers: domain.NameServerSettings?.Type || "-",
-        folder: domain.Folder?.FolderName || "-",
+        mailboxHint: options.mailboxHint || "",
+        dynadotAccount: options.dynadotAccount || "",
       };
     })
     .filter(Boolean);
@@ -271,218 +322,15 @@ function extractUnstoppableDomains(payload) {
     .map((domain) => {
       const name = domain.name || domain.domain || "";
       if (!name) return null;
-
-      const autoRenewal = domain.autoRenewal || {};
-      const listing = domain.listing || {};
-
       return {
         name,
         source: "Unstoppable",
         registrar: "Unstoppable",
-        marketplacePrice: formatUnstoppablePrice(domain?.listing?.price),
-        status:
-          domain.transferStatus ||
-          domain.registryType ||
-          (domain.isExternallyOwned ? "externally-owned" : "owned"),
-        expiry: domain.expiresAt || domain.lifecycle?.expiresAt || "-",
-        registration: domain.purchasedAt || domain.lifecycle?.purchasedAt || "-",
-        privacy: domain.flags?.DNS_WHOIS_PROXY?.status || "-",
-        renewOption: autoRenewal.status || domain.lifecycle?.autoRenewal?.status || "-",
-        transferStatus: domain.transferStatus || domain.lifecycle?.transferStatus || "-",
-        registryType: domain.extension ? `.${domain.extension}` : "-",
-        listingStatus: listing.status || "-",
+        expiry: normalizeDateValue(domain.expiresAt || domain.autoRenewal?.expiresAt),
+        registration: normalizeDateValue(domain.purchasedAt),
       };
     })
     .filter(Boolean);
-}
-
-function extractUnstoppableBillingTransactions(payload) {
-  const items =
-    payload?.transactions ||
-    payload?.data?.transactions ||
-    payload?.data ||
-    payload?.results ||
-    payload?.items ||
-    [];
-
-  const list = Array.isArray(items) ? items : [items];
-  return list
-    .map((transaction) => {
-      const text = [
-        deepFindString(transaction, [
-          /^domain$/i,
-          /domain_name/i,
-          /domainName/i,
-          /description/i,
-          /memo/i,
-          /note/i,
-          /title/i,
-        ]),
-        deepFindString(transaction, [/^name$/i, /itemName/i, /productName/i]),
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .trim();
-
-      const domainName = extractDomainNameFromText(text) || deepFindString(transaction, [/^domain$/i, /domain_name/i, /domainName/i]);
-      if (!domainName) return null;
-
-      const amount =
-        deepFindValue(transaction, [
-          /amountFormatted/i,
-          /formattedAmount/i,
-          /totalFormatted/i,
-          /chargeFormatted/i,
-          /priceFormatted/i,
-        ]) ??
-        deepFindValue(transaction, [
-          /amount$/i,
-          /^amount$/i,
-          /total/i,
-          /grossAmount/i,
-          /netAmount/i,
-          /price/i,
-          /charge/i,
-        ]);
-
-      const formattedAmount = formatUnstoppableTransactionAmount(amount);
-      if (!formattedAmount) return null;
-
-      return {
-        domainName,
-        searchText: text,
-        amountFormatted: formattedAmount,
-        amountValue: parseUnstoppableTransactionAmountValue(amount),
-        timestamp: normalizeDateValue(
-          deepFindValue(transaction, [/createdAt/i, /processedAt/i, /transactionDate/i, /date/i, /timestamp/i]),
-        ),
-        type: deepFindString(transaction, [/^type$/i, /transactionType/i, /kind/i]) || "",
-      };
-    })
-    .filter(Boolean);
-}
-
-function applyUnstoppableBillingPrices(domains, transactions) {
-  if (!Array.isArray(domains) || !Array.isArray(transactions) || !transactions.length) return domains;
-
-  const bestByDomain = new Map();
-  for (const transaction of transactions) {
-    const key = normalizeDomainKey(transaction.domainName);
-    if (!key) continue;
-    if (!isPurchaseLikeTransaction(transaction)) continue;
-
-    const timestamp = Date.parse(transaction.timestamp || "");
-    const existing = bestByDomain.get(key);
-    if (!existing) {
-      bestByDomain.set(key, transaction);
-      continue;
-    }
-
-    const existingTime = Date.parse(existing.timestamp || "");
-    if (Number.isFinite(timestamp) && Number.isFinite(existingTime) && timestamp < existingTime) {
-      bestByDomain.set(key, transaction);
-      continue;
-    }
-
-    if (!existing.amountFormatted && transaction.amountFormatted) {
-      bestByDomain.set(key, transaction);
-    }
-  }
-
-  return domains.map((domain) => {
-    if (!isUnstoppableDomain(domain)) return domain;
-    const transaction = bestByDomain.get(normalizeDomainKey(domain.name));
-    if (!transaction) return domain;
-
-    return {
-      ...domain,
-      purchasePrice: transaction.amountFormatted,
-      purchaseAmount: transaction.amountValue ?? domain.purchaseAmount ?? "",
-      purchaseSource: "unstoppable-billing",
-    };
-  });
-}
-
-function isUnstoppableDomain(domain) {
-  return String(domain?.source || "").toLowerCase().includes("unstoppable");
-}
-
-function isPurchaseLikeTransaction(transaction) {
-  const text = `${transaction?.type || ""} ${transaction?.searchText || ""} ${transaction?.domainName || ""}`.toLowerCase();
-  return (
-    /(purchase|registration|register|buy|checkout|order)/i.test(text) &&
-    !/(renewal|renew|renewed)/i.test(text)
-  );
-}
-
-function extractDomainNameFromText(text) {
-  const match = String(text || "").match(/\b([a-z0-9-]+\.[a-z]{2,})\b/i);
-  return match?.[1] || "";
-}
-
-function parseUnstoppableTransactionAmountValue(value) {
-  if (value === null || value === undefined || value === "") return null;
-  if (typeof value === "number" && Number.isFinite(value)) {
-    if (Number.isInteger(value)) {
-      return value > 100 ? value / 100 : value;
-    }
-    return value;
-  }
-
-  const normalized = String(value).replace(/,/g, "").trim();
-  if (!normalized) return null;
-  if (/^[\$\€\£\₹]/.test(normalized)) {
-    const numeric = Number(normalized.replace(/[^\d.-]/g, ""));
-    return Number.isFinite(numeric) ? numeric : null;
-  }
-  if (/^-?\d+\.\d+$/.test(normalized)) {
-    const numeric = Number(normalized);
-    return Number.isFinite(numeric) ? numeric : null;
-  }
-  if (/^-?\d+$/.test(normalized)) {
-    const numeric = Number(normalized);
-    if (!Number.isFinite(numeric)) return null;
-    return numeric > 100 ? numeric / 100 : numeric;
-  }
-  return null;
-}
-
-function formatUnstoppableTransactionAmount(value) {
-  if (value === null || value === undefined || value === "") return "";
-
-  if (typeof value === "number" && Number.isFinite(value)) {
-    const dollars = Number.isInteger(value) && value > 100 ? value / 100 : value;
-    return `$${Number(dollars).toFixed(2)}`;
-  }
-
-  const normalized = String(value).trim();
-  if (!normalized) return "";
-  if (/^[\$\€\£\₹]/.test(normalized)) return normalized;
-
-  const numeric = Number(normalized.replace(/,/g, ""));
-  if (!Number.isFinite(numeric)) return normalized;
-  const dollars = /^\d+$/.test(normalized) && numeric > 100 ? numeric / 100 : numeric;
-  return `$${Number(dollars).toFixed(2)}`;
-}
-
-function formatUnstoppablePrice(value) {
-  if (value === null || value === undefined || value === "") return "";
-
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return `$${(value / 100).toFixed(2)}`;
-  }
-
-  const normalized = String(value).trim();
-  if (!normalized) return "";
-  if (/^[\$\€\£\₹]/.test(normalized)) return normalized;
-  if (/^[A-Z]{3}\s+[0-9]/.test(normalized)) return normalized;
-
-  const parsed = Number(normalized.replace(/,/g, ""));
-  if (Number.isFinite(parsed)) {
-    return `$${(parsed / 100).toFixed(2)}`;
-  }
-
-  return normalized;
 }
 
 function extractNameSiloDomains(payload) {
@@ -510,70 +358,8 @@ function extractNameSiloDomains(payload) {
         name,
         source: "NameSilo",
         registrar: "NameSilo",
-        status: item?.status || reply?.status || "unknown",
         expiry: normalizeDateValue(item?.expires || item?.expiry || item?.expiration || item?.expiration_date),
         registration: normalizeDateValue(item?.created || item?.registration || item?.registration_date),
-        privacy: item?.private || item?.privacy || "-",
-        renewOption: item?.auto_renew || item?.renew || "-",
-      };
-    })
-    .filter(Boolean);
-}
-
-function extractSavDomains(payload) {
-  const reply = payload?.reply || payload?.data || payload?.response || payload;
-  const items =
-    reply?.domains ||
-    reply?.domain ||
-    reply?.active_domains ||
-    reply?.activeDomains ||
-    reply?.domains_list ||
-    reply?.domain_list ||
-    reply?.domainsList ||
-    reply?.activeDomainList ||
-    [];
-
-  const list = Array.isArray(items) ? items : [items];
-  return list
-    .map((item) => {
-      const name =
-        deepFindString(item, [/^domain$/i, /domain_name/i, /domainname/i, /domain_label/i, /^name$/i, /^label$/i]) ||
-        deepFindString(reply, [/^domain$/i, /domain_name/i, /domainname/i, /domain_label/i, /^name$/i, /^label$/i]);
-      if (!name) return null;
-      return {
-        name,
-        source: "Sav",
-        registrar: "Sav",
-        status:
-          deepFindString(item, [/^status$/i, /domain_status/i, /domainStatus/i, /^state$/i, /domain_state/i]) ||
-          deepFindString(reply, [/^status$/i, /response_status/i]) ||
-          "unknown",
-        expiry: normalizeDateValue(
-          deepFindString(item, [
-            /expiry/i,
-            /expires_at/i,
-            /expiration/i,
-            /expiration_date/i,
-            /expires_on/i,
-            /renewal_date/i,
-            /next_renewal_date/i,
-          ]),
-        ),
-        registration: normalizeDateValue(
-          deepFindString(item, [
-            /purchase_date/i,
-            /registration_date/i,
-            /registered_at/i,
-            /created_at/i,
-            /date_created/i,
-            /^created$/i,
-            /^registration$/i,
-          ]),
-        ),
-        privacy: deepFindString(item, [/privacy/i, /whois_privacy/i, /private/i, /is_private/i]) || "-",
-        renewOption: deepFindString(item, [/auto_renew/i, /autoRenew/i, /auto_renewal/i, /renew$/i]) || "-",
-        transferStatus: deepFindString(item, [/transfer_status/i, /transferStatus/i, /^transfer$/i]) || "-",
-        registryType: deepFindString(item, [/registry_type/i, /registryType/i, /^tld$/i, /extension/i]) || "-",
       };
     })
     .filter(Boolean);
@@ -588,24 +374,12 @@ function extractSpaceshipDomains(payload) {
       const name = item?.unicodeName || item?.name || "";
       if (!name) return null;
 
-      const nameservers = Array.isArray(item?.nameservers?.hosts)
-        ? item.nameservers.hosts.join(", ")
-        : item?.nameservers?.provider || "-";
-
       return {
         name,
         source: "Spaceship",
         registrar: "Spaceship",
-        status: item?.lifecycleStatus || item?.verificationStatus || "unknown",
         expiry: normalizeDateValue(item?.expirationDate),
         registration: normalizeDateValue(item?.registrationDate),
-        privacy:
-          item?.privacyProtection?.level ||
-          (item?.privacyProtection?.contactForm ? "contact-form" : "-"),
-        renewOption: item?.autoRenew === true ? "enabled" : item?.autoRenew === false ? "disabled" : "-",
-        transferStatus: (item?.eppStatuses || []).join(", ") || "-",
-        registryType: item?.isPremium ? "premium" : item?.unicodeName ? "idn" : "-",
-        nameservers,
       };
     })
     .filter(Boolean);
@@ -629,6 +403,11 @@ function dedupeDomains(list) {
     map.set(key, {
       ...existing,
       ...item,
+      // Prefer explicit mailbox hint (e.g. letsliterate Dynadot account).
+      mailboxHint: item.mailboxHint || existing.mailboxHint || "",
+      dynadotAccount: item.dynadotAccount || existing.dynadotAccount || "",
+      expiry: item.expiry || existing.expiry || "",
+      registration: item.registration || existing.registration || "",
       source: existing.source === item.source ? existing.source : `${existing.source}, ${item.source}`,
     });
   }
@@ -638,15 +417,15 @@ function dedupeDomains(list) {
 function formatDynadotTimestamp(value) {
   if (value === undefined || value === null || value === "") return "";
   const numeric = Number(value);
-  if (!Number.isFinite(numeric) || numeric <= 0) return String(value);
+  if (!Number.isFinite(numeric) || numeric <= 0) return normalizeDateValue(value);
   const date = new Date(numeric);
-  if (Number.isNaN(date.getTime())) return String(value);
+  if (Number.isNaN(date.getTime())) return "";
   return date.toISOString().slice(0, 10);
 }
 
 function normalizeDateValue(value) {
   if (value === undefined || value === null || value === "") return "";
-  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10);
   const numeric = Number(value);
   if (Number.isFinite(numeric) && numeric > 0) {
     const ms = numeric < 1e12 ? numeric * 1000 : numeric;
@@ -655,35 +434,7 @@ function normalizeDateValue(value) {
   }
   const date = new Date(value);
   if (!Number.isNaN(date.getTime())) return date.toISOString().slice(0, 10);
-  return String(value);
-}
-
-function deepFindString(node, patterns) {
-  const value = deepFindValue(node, patterns);
-  if (typeof value === "string" && value.trim()) return value.trim();
-  if (typeof value === "number" && Number.isFinite(value)) return String(value);
-  if (value instanceof Date && !Number.isNaN(value.getTime())) return value.toISOString();
   return "";
-}
-
-function deepFindValue(node, patterns) {
-  if (!node || typeof node !== "object") return null;
-  if (Array.isArray(node)) {
-    for (const item of node) {
-      const found = deepFindValue(item, patterns);
-      if (found !== null && found !== undefined && found !== "") return found;
-    }
-    return null;
-  }
-
-  for (const [key, value] of Object.entries(node)) {
-    if (patterns.some((pattern) => pattern.test(key))) {
-      if (value !== null && value !== undefined && value !== "") return value;
-    }
-    const found = deepFindValue(value, patterns);
-    if (found !== null && found !== undefined && found !== "") return found;
-  }
-  return null;
 }
 
 function parseJson(body) {
@@ -693,4 +444,22 @@ function parseJson(body) {
   } catch {
     return {};
   }
+}
+
+/** Surface DNS/network causes — Node often only says "fetch failed". */
+function formatProviderError(reason) {
+  if (!(reason instanceof Error)) return String(reason);
+  const cause = reason.cause;
+  const code = cause?.code || "";
+  const detail = cause?.message || "";
+  if (code === "ENOTFOUND" || code === "EAI_AGAIN") {
+    return `DNS failed (${code}) — restart npm start in your own terminal (not Cursor sandbox)`;
+  }
+  if (code === "ECONNREFUSED" || code === "ETIMEDOUT" || code === "ENETUNREACH") {
+    return `network ${code}${detail ? `: ${detail}` : ""}`;
+  }
+  if (code || detail) {
+    return `${reason.message}${code ? ` [${code}]` : ""}${detail && detail !== reason.message ? `: ${detail}` : ""}`;
+  }
+  return reason.message;
 }

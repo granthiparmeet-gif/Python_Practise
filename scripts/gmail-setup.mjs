@@ -2,18 +2,23 @@ import { existsSync, readFileSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { loadSecretsEnv, getGoogleOAuthConfig } from "../config/load-secrets.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, "..");
 
+loadSecretsEnv();
 loadDotEnv(path.join(root, ".env"));
 
 const port = Number(process.env.PORT || 3001);
 const baseUrl = `http://127.0.0.1:${port}`;
 const statusUrl = `${baseUrl}/api/gmail/status`;
 const healthUrl = `${baseUrl}/api/health`;
-const authUrl = `${baseUrl}/auth/google/login`;
+const accountHint = String(process.argv[2] || process.env.GMAIL_SETUP_ACCOUNT || "").trim().toLowerCase();
+const authUrl = accountHint
+  ? `${baseUrl}/auth/google/login?account=${encodeURIComponent(accountHint)}`
+  : `${baseUrl}/auth/google/login`;
 const serverScript = path.join(root, "server.js");
 
 let spawnedServer = null;
@@ -24,13 +29,24 @@ main().catch((error) => {
 });
 
 async function main() {
-  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REDIRECT_URI) {
-    throw new Error("GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_REDIRECT_URI must be set in .env.");
+  if (!getGoogleOAuthConfig(accountHint)) {
+    throw new Error(
+      accountHint
+        ? `No OAuth client for ${accountHint}. Add secrets/gmail/${accountHint}.json`
+        : "No Google OAuth client found. Add secrets/gmail/<email>.json or secrets/config.env GOOGLE_* keys.",
+    );
   }
 
   await ensureBackendAvailable();
 
   console.log(`Opening Gmail authorization at ${authUrl}`);
+  if (accountHint) {
+    console.log(`Target mailbox hint: ${accountHint}`);
+    console.log("Sign in with that Google account in the browser consent screen.");
+  } else {
+    console.log("Tip: pass an email to pre-select the account, e.g.");
+    console.log("  npm run gmail:setup -- letsliterate@gmail.com");
+  }
   const opened = openInBrowser(authUrl);
   if (!opened) {
     console.log(`Open this URL in your browser: ${authUrl}`);
@@ -40,12 +56,20 @@ async function main() {
   const deadline = Date.now() + 5 * 60 * 1000;
   while (Date.now() < deadline) {
     const status = await fetchJson(statusUrl);
-    if (status?.connected && status?.mailboxReadable) {
-      const health = await fetchJson(healthUrl);
+    const accounts = Array.isArray(status?.accounts) ? status.accounts : [];
+    const matched = accountHint
+      ? accounts.find((item) => item.email === accountHint && item.connected)
+      : accounts.find((item) => item.connected) || (status?.connected ? status : null);
+
+    if (matched?.connected || (status?.connected && status?.mailboxReadable && !accountHint)) {
       console.log("Gmail setup complete.");
-      console.log(`Account: ${health.gmailAccount || status.gmailAccount || "unknown"}`);
-      console.log(`Last sync: ${health.lastSync || status.lastSync || "unknown"}`);
-      console.log(`Mailbox readable: ${Boolean(health.mailboxReadable)}`);
+      if (accounts.length) {
+        for (const item of accounts) {
+          console.log(`- ${item.email}: ${item.connected ? "connected" : "not connected"}`);
+        }
+      } else {
+        console.log(`Account: ${status.gmailAccount || "unknown"}`);
+      }
       cleanup(0);
       return;
     }

@@ -1,0 +1,928 @@
+[
+  {
+    "shot": "img-000",
+    "action": "ignore",
+    "from": "accounts@dynadot.com",
+    "subject": "Afternic Confirmation Needed",
+    "domains": [
+      "builddt.com"
+    ]
+  },
+  {
+    "shot": "img-002",
+    "action": "purchase",
+    "from": "orders@dynadot.com",
+    "subject": "Order Finished",
+    "domains": [
+      "digitaltwinlife.com",
+      "builddt.com"
+    ],
+    "orderTotal": "15.76"
+  },
+  {
+    "shot": "img-004",
+    "action": "ignore",
+    "note": "Auto-Renew Order Submitted \u2014 wait for Order Finished"
+  },
+  {
+    "shot": "img-006",
+    "action": "expiry_notice",
+    "from": "accounts@dynadot.com",
+    "subject": "builddt.com expires in 30 days",
+    "domains": [
+      "builddt.com"
+    ],
+    "expiry": "2025-07-19"
+  },
+  {
+    "shot": "img-008",
+    "action": "ignore",
+    "from": "accounts@dynadot.com",
+    "subject": "Unable to submit auto-renew order"
+  },
+  {
+    "shot": "img-010",
+    "action": "ignore",
+    "from": "mc@mailmc.afternic.com",
+    "subject": "Your link for builddt.com has expired!",
+    "domains": [
+      "builddt.com"
+    ]
+  },
+  {
+    "shot": "shot-005.png",
+    "action": "ignore",
+    "from": "mc@mailmc.afternic.com",
+    "subject": "Your link for builddt.com has expired!",
+    "domains": [
+      "builddt.com"
+    ]
+  },
+  {
+    "shot": "shot-006.png",
+    "action": "expiry_notice",
+    "from": "accounts@dynadot.com",
+    "subject": "builddt.com expires in 7 days",
+    "domains": [
+      "builddt.com"
+    ],
+    "expiry": "2026/07/19"
+  },
+  {
+    "shot": "shot-007.png",
+    "action": "ignore",
+    "from": "orders@dynadot.com",
+    "subject": "Order Received",
+    "domains": [
+      "createtwin.com",
+      "builddt.com"
+    ],
+    "note": "Order Received renewals \u2014 wait for Finished"
+  },
+  {
+    "shot": "shot-008.png",
+    "action": "purchase",
+    "from": "support@porkbun.com",
+    "subject": "porkbun.com | Order - Thank You",
+    "domains": [
+      "automllabs.com"
+    ]
+  },
+  {
+    "shot": "shot-009.png",
+    "action": "expiry_notice",
+    "from": "support@porkbun.com",
+    "subject": "Domain Renewal Notice - 60 days",
+    "domains": [
+      "tailorednlp.com",
+      "buildnlp.com",
+      "customizednlp.com",
+      "automllabs.com"
+    ]
+  },
+  {
+    "shot": "shot-010.png",
+    "action": "ignore",
+    "from": "orders@dynadot.com",
+    "subject": "Order Received",
+    "domains": [
+      "automllabs.com"
+    ],
+    "note": "transfer Order Received \u2014 wait for Finished"
+  },
+  {
+    "shot": "shot-011.png",
+    "action": "purchase",
+    "from": "support@sav.com",
+    "subject": "Sav.com Receipt",
+    "domains": [
+      "comfytravels.com"
+    ]
+  },
+  {
+    "shot": "shot-012.png",
+    "action": "renewal",
+    "from": "support@sav.com",
+    "subject": "Sav.com Receipt",
+    "domains": [
+      "comfytravels.com"
+    ]
+  },
+  {
+    "shot": "shot-013.png",
+    "action": "expiry_notice",
+    "from": "support@sav.com",
+    "subject": "Action Required: Please Renew Domain",
+    "domains": [
+      "comfytravels.com"
+    ]
+  },
+  {
+    "shot": "shot-014.png",
+    "action": "purchase",
+    "from": "orders@dynadot.com",
+    "subject": "Order Finished",
+    "domains": [
+      "twinexpert.com",
+      "twincommunity.com",
+      "createtwin.com"
+    ]
+  },
+  {
+    "shot": "shot-015.png",
+    "action": "expiry_notice",
+    "from": "support@namesilo.com",
+    "subject": "Upcoming Domain Expirations - Last Reminder",
+    "domains": [
+      "automl.net"
+    ]
+  },
+  {
+    "shot": "shot-016.png",
+    "action": "expiry_notice",
+    "from": "support@sav.com",
+    "subject": "Action Required: Please Renew Domain",
+    "domains": [
+      "gamefisolutions.com"
+    ]
+  },
+  {
+    "shot": "shot-017.png",
+    "action": "expiry_notice",
+    "from": "support@porkbun.com",
+    "subject": "Expired Domains - sent to auction",
+    "domains": [
+      "efficient.solutions"
+    ]
+  },
+  {
+    "shot": "shot-018.png",
+    "action": "expiry_notice",
+    "from": "accounts@dynadot.com",
+    "subject": "unbankedpay.com expired today",
+    "domains": [
+      "unbankedpay.com"
+    ],
+    "expiry": "2026/05/14"
+  },
+  {
+    "shot": "shot-019.png",
+    "action": "expiry_notice",
+    "from": "alert@spaceship.com",
+    "subject": "will expire in 6 days",
+    "domains": [
+      "borderlesspay.co"
+    ]
+  },
+  {
+    "shot": "shot-020.png",
+    "action": "expiry_notice",
+    "from": "renewals@namecheap.com",
+    "subject": "will expire in 15 days",
+    "domains": [
+      "ctemsolutions.com"
+    ]
+  },
+  {
+    "shot": "shot-021.png",
+    "action": "expiry_notice",
+    "from": "support@porkbun.com",
+    "subject": "Domain Renewal Notice - 30 days",
+    "domains": [
+      "tailorednlp.com",
+      "buildnlp.com",
+      "customizednlp.com",
+      "automnlp.com"
+    ]
+  },
+  {
+    "shot": "shot-022.png",
+    "action": "expiry_notice",
+    "from": "alert@spaceship.com",
+    "subject": "will expire in 30 days",
+    "domains": [
+      "selfcustody.exchange"
+    ]
+  },
+  {
+    "shot": "shot-023.png",
+    "action": "expiry_notice",
+    "from": "accounts@dynadot.com",
+    "subject": "betterxai.com expired today",
+    "domains": [
+      "betterxai.com"
+    ],
+    "expiry": "2024/07/18"
+  },
+  {
+    "shot": "shot-024.png",
+    "action": "expiry_notice",
+    "from": "renewals@godaddy.com",
+    "subject": "Your domain expires soon",
+    "domains": [
+      "automlsolutions.com"
+    ],
+    "expiry": "28-08-2025"
+  },
+  {
+    "shot": "shot-025.png",
+    "action": "expiry_notice",
+    "from": "support@namebright.com",
+    "subject": "Expiring Domains - 7 Day Notice",
+    "domains": [
+      "YogaCarnival.com",
+      "DetoxHut.com"
+    ]
+  },
+  {
+    "shot": "shot-026.png",
+    "action": "purchase",
+    "from": "donotreply@godaddy.com",
+    "subject": "thank you for your order",
+    "domains": [
+      "predictivemind.com"
+    ]
+  },
+  {
+    "shot": "shot-027.png",
+    "action": "purchase",
+    "from": "support@dropcatch.com",
+    "subject": "DropCatch.com Order Receipt",
+    "domains": [
+      "YogaCarnival.com",
+      "DetoxHut.com"
+    ]
+  },
+  {
+    "shot": "shot-028.png",
+    "action": "purchase",
+    "from": "support@dropcatch.com",
+    "subject": "DropCatch.com Order Receipt",
+    "domains": [
+      "GayQuotes.com"
+    ]
+  },
+  {
+    "shot": "shot-029.png",
+    "action": "transfer",
+    "from": "orders@dynadot.com",
+    "subject": "Order Received",
+    "domains": [
+      "veganbuyer.com",
+      "saintlane.com",
+      "missionhemp.com",
+      "perfecthashtag.com"
+    ],
+    "note": "transfer+extend \u2014 prefer Order Finished for spend"
+  },
+  {
+    "shot": "shot-030.png",
+    "action": "ignore",
+    "from": "orders@dynadot.com",
+    "subject": "Order Received",
+    "domains": [
+      "shutnow.com",
+      "peelnow.com",
+      "implynow.com",
+      "snorenow.com",
+      "swearnow.com",
+      "assumenow.com"
+    ],
+    "note": "Order Received registrations \u2014 wait for Finished"
+  },
+  {
+    "shot": "shot-031.png",
+    "action": "sale",
+    "from": "accounts@dynadot.com",
+    "subject": "specifynow.com SOLD",
+    "domains": [
+      "specifynow.com"
+    ]
+  },
+  {
+    "shot": "shot-032.png",
+    "action": "sale",
+    "from": "accounts@dynadot.com",
+    "subject": "customnlp.com SOLD",
+    "domains": [
+      "customnlp.com"
+    ]
+  },
+  {
+    "shot": "shot-033.png",
+    "action": "sale",
+    "from": "accounts@dynadot.com",
+    "subject": "attemptnow.com SOLD",
+    "domains": [
+      "attemptnow.com"
+    ]
+  },
+  {
+    "shot": "shot-034.png",
+    "action": "sale",
+    "from": "accounts@dynadot.com",
+    "subject": "marinatenow.com SOLD",
+    "domains": [
+      "marinatenow.com"
+    ]
+  },
+  {
+    "shot": "shot-035.png",
+    "action": "sale",
+    "from": "accounts@dynadot.com",
+    "subject": "realestatevsstocks.com SOLD",
+    "domains": [
+      "realestatevsstocks.com"
+    ]
+  },
+  {
+    "shot": "shot-036.png",
+    "action": "sale",
+    "from": "accounts@dynadot.com",
+    "subject": "insistnow.com SOLD",
+    "domains": [
+      "insistnow.com"
+    ]
+  },
+  {
+    "shot": "shot-037.png",
+    "action": "sale",
+    "from": "sales@epik.com",
+    "subject": "covidtax.com sold at Epik",
+    "domains": [
+      "covidtax.com"
+    ]
+  },
+  {
+    "shot": "shot-038.png",
+    "action": "sale",
+    "from": "no-reply@masterbucks.com",
+    "subject": "Masterbucks payment",
+    "domains": [
+      "covidtax.com"
+    ],
+    "note": "gross/commission/net"
+  },
+  {
+    "shot": "shot-039.png",
+    "action": "sale",
+    "from": "ta@afternic.com",
+    "subject": "has sold via Fast Transfer",
+    "domains": [
+      "car-charger.com"
+    ]
+  },
+  {
+    "shot": "shot-040.png",
+    "action": "sale",
+    "from": "ta@afternic.com",
+    "subject": "Your funds are on the way!",
+    "domains": [
+      "car-charger.com"
+    ],
+    "note": "net payout after commission"
+  },
+  {
+    "shot": "shot-041.png",
+    "action": "sale",
+    "from": "support@dan.com",
+    "subject": "Transaction closed",
+    "domains": [
+      "ManmeetSingh.com"
+    ]
+  },
+  {
+    "shot": "shot-042.png",
+    "action": "sale",
+    "from": "ta@afternic.com",
+    "subject": "has sold via Fast Transfer",
+    "domains": [
+      "weddingshoe.com"
+    ]
+  },
+  {
+    "shot": "shot-043.png",
+    "action": "sale",
+    "from": "no-reply@masterbucks.com",
+    "subject": "Masterbucks payment",
+    "domains": [
+      "dexpllace.com"
+    ]
+  },
+  {
+    "shot": "shot-044.png",
+    "action": "sale",
+    "from": "support@dan.com",
+    "subject": "Transaction closed",
+    "domains": [
+      "agi.solutions"
+    ]
+  },
+  {
+    "shot": "shot-045.png",
+    "action": "sale",
+    "from": "support@dan.com",
+    "subject": "Buy now",
+    "domains": [
+      "agi.solutions"
+    ]
+  },
+  {
+    "shot": "shot-046.png",
+    "action": "sale",
+    "from": "support@dan.com",
+    "subject": "Counter offer accepted",
+    "domains": [
+      "FirstFragrance.com"
+    ]
+  },
+  {
+    "shot": "shot-047.png",
+    "action": "sale",
+    "from": "support@dan.com",
+    "subject": "Payment received",
+    "domains": [
+      "FirstFragrance.com"
+    ]
+  },
+  {
+    "shot": "shot-048.png",
+    "action": "sale",
+    "from": "ta@afternic.com",
+    "subject": "has sold via Fast Transfer",
+    "domains": [
+      "crimedocumentaries.com"
+    ]
+  },
+  {
+    "shot": "shot-049.png",
+    "action": "sale",
+    "from": "no-reply@masterbucks.com",
+    "subject": "Masterbucks payment",
+    "domains": [
+      "ketogenicdietmenu.com"
+    ]
+  },
+  {
+    "shot": "shot-050.png",
+    "action": "sale",
+    "from": "contact@sedo.com",
+    "subject": "Congratulations on the sale",
+    "domains": [
+      "solarsolutions.net"
+    ]
+  },
+  {
+    "shot": "shot-051.png",
+    "action": "sale",
+    "from": "ta@afternic.com",
+    "subject": "Your funds are on the way!",
+    "domains": [
+      "360cafe.com"
+    ]
+  },
+  {
+    "shot": "shot-052.png",
+    "action": "sale",
+    "from": "support@namecheap.com",
+    "subject": "Marketplace Sale Confirmation",
+    "domains": [
+      "organicfalcon.com"
+    ]
+  },
+  {
+    "shot": "shot-053.png",
+    "action": "sale",
+    "from": "sales@epik.com",
+    "subject": "sold at Epik",
+    "domains": [
+      "daoforums.com"
+    ]
+  },
+  {
+    "shot": "shot-054.png",
+    "action": "sale",
+    "from": "accounts@dynadot.com",
+    "subject": "generativegame.com SOLD",
+    "domains": [
+      "generativegame.com"
+    ]
+  },
+  {
+    "shot": "shot-055.png",
+    "action": "ignore",
+    "from": "orders@dynadot.com",
+    "subject": "Order Received",
+    "domains": [
+      "daoforums.com",
+      "crosschaindefi.net",
+      "crosschainindex.io",
+      "cross-chaindex.com",
+      "cross-chaindefi.com"
+    ]
+  },
+  {
+    "shot": "shot-056.png",
+    "action": "purchase",
+    "from": "support@namesilo.com",
+    "subject": "Thank you for your order",
+    "domains": [
+      "rwasolutions.com"
+    ],
+    "note": "Aftermarket Premium"
+  },
+  {
+    "shot": "shot-057.png",
+    "action": "purchase",
+    "from": "support@namecheap.com",
+    "subject": "Namecheap Order Summary",
+    "domains": [
+      "wellnessclan.com",
+      "crmxpert.com"
+    ]
+  },
+  {
+    "shot": "shot-058.png",
+    "action": "purchase",
+    "from": "orders@dynadot.com",
+    "subject": "Order Finished Processing",
+    "domains": [
+      "upcyclinghub.com"
+    ],
+    "note": "user auction"
+  },
+  {
+    "shot": "shot-059.png",
+    "action": "purchase",
+    "from": "support@namesilo.com",
+    "subject": "Thank you for your order",
+    "domains": [
+      "crossfittrainer.com"
+    ],
+    "note": "DomainAuction + renewal"
+  },
+  {
+    "shot": "shot-060.png",
+    "action": "purchase",
+    "from": "support@dropcatch.com",
+    "subject": "DropCatch.com Order Receipt",
+    "domains": [
+      "ConquerPoker.com"
+    ]
+  },
+  {
+    "shot": "shot-061.png",
+    "action": "purchase",
+    "from": "support@sav.com",
+    "subject": "Sav.com Receipt",
+    "domains": [
+      "saas.solutions"
+    ]
+  },
+  {
+    "shot": "shot-062.png",
+    "action": "purchase",
+    "from": "donotreply@godaddy.com",
+    "subject": "Thanks for your order",
+    "domains": [
+      "predictivemind.com"
+    ]
+  },
+  {
+    "shot": "shot-063.png",
+    "action": "purchase",
+    "from": "support@namesilo.com",
+    "subject": "Thank you for your order",
+    "domains": [
+      "4khentai.com"
+    ]
+  },
+  {
+    "shot": "shot-064.png",
+    "action": "purchase",
+    "from": "support@namesilo.com",
+    "subject": "Thank you for your order",
+    "domains": [
+      "addresstracking.com"
+    ]
+  },
+  {
+    "shot": "shot-065.png",
+    "action": "purchase",
+    "from": "receipts@spaceship.com",
+    "subject": "Spaceship order",
+    "domains": [
+      "turnguru.com"
+    ],
+    "amounts": [
+      "$5.87"
+    ],
+    "notes": "Spaceship order summary; Final cost"
+  },
+  {
+    "shot": "shot-066.png",
+    "action": "purchase",
+    "from": "noreply@name.com",
+    "subject": "Name.com - Order Confirmation",
+    "domains": [
+      "towingdubai.com"
+    ],
+    "amounts": [
+      "\u20b91588.95"
+    ]
+  },
+  {
+    "shot": "shot-067.png",
+    "action": "purchase",
+    "from": "support@cosmotown.com",
+    "subject": "New Cosmotown Order Receipt",
+    "domains": [
+      "pleasantfragrance.com"
+    ],
+    "amounts": [
+      "$6.55"
+    ]
+  },
+  {
+    "shot": "shot-068.png",
+    "action": "purchase",
+    "from": "snapnames-automail@snapnames.com",
+    "subject": "you have acquired",
+    "domains": [
+      "premiumcoupons.com"
+    ],
+    "amounts": [
+      "$79.00"
+    ]
+  },
+  {
+    "shot": "shot-069.png",
+    "action": "purchase",
+    "from": "support@porkbun.com",
+    "subject": "Order - Thank You",
+    "domains": [
+      "automllabs.com"
+    ],
+    "amounts": [
+      "$5.99"
+    ]
+  },
+  {
+    "shot": "shot-070.png",
+    "action": "expiry_notice",
+    "from": "support@porkbun.com",
+    "subject": "Expired Domains",
+    "domains": [
+      "automitech.com",
+      "netzero.world"
+    ],
+    "expiry": "2025-09-16 / 2025-12-04"
+  },
+  {
+    "shot": "shot-071.png",
+    "action": "expense",
+    "from": "invoice+statements@namebio.com",
+    "subject": "Your receipt from NameBio.com",
+    "domains": [],
+    "note": "NameBio Domainer $25",
+    "amounts": [
+      "$25.00"
+    ]
+  },
+  {
+    "shot": "shot-072.png",
+    "action": "expense",
+    "from": "invoice+statements@namebio.com",
+    "subject": "Your receipt from NameBio.com",
+    "domains": [],
+    "note": "NameBio Domainer annual $144",
+    "amounts": [
+      "$144.00"
+    ]
+  },
+  {
+    "shot": "shot-073.png",
+    "action": "expense",
+    "from": "godaddy",
+    "subject": "Your receipt from GoDaddy",
+    "domains": [],
+    "note": "Discount Domain Club Premium INR",
+    "amounts": [
+      "\u20b923588.20"
+    ]
+  },
+  {
+    "shot": "shot-074.png",
+    "action": "expense",
+    "from": "service@intl.paypal.com",
+    "subject": "You've sent a payment",
+    "domains": [],
+    "note": "DotDB yearly via PayPal",
+    "amounts": [
+      "$503.93",
+      "\u20b944010.90"
+    ]
+  },
+  {
+    "shot": "shot-075.png",
+    "action": "expense",
+    "from": "no-reply@razorpay.com",
+    "subject": "Payment successful for HOSTINGER",
+    "domains": [],
+    "amounts": [
+      "\u20b9695.02"
+    ]
+  },
+  {
+    "shot": "shot-076.png",
+    "action": "expense",
+    "from": "no-reply@info.surfshark.com",
+    "subject": "payment was successful",
+    "domains": [],
+    "note": "Surfshark VPN",
+    "amounts": [
+      "$41.88"
+    ]
+  },
+  {
+    "shot": "shot-077.png",
+    "action": "push",
+    "from": "orders@dynadot.com",
+    "subject": "Order Finished",
+    "domains": [
+      "synchunt.com"
+    ],
+    "note": "domain change account $0",
+    "amounts": [
+      "$0.00"
+    ]
+  },
+  {
+    "shot": "shot-078.png",
+    "action": "push",
+    "from": "orders@dynadot.com",
+    "subject": "Order Finished",
+    "domains": [
+      "gloryinvest.com"
+    ],
+    "note": "Owner Changed push $0",
+    "amounts": [
+      "$0.00"
+    ]
+  },
+  {
+    "shot": "shot-079.png",
+    "action": "removal",
+    "from": "accounts@dynadot.com",
+    "subject": "removed from account",
+    "domains": [
+      "gummiesshop.com"
+    ],
+    "expiry": "2025/12/06"
+  },
+  {
+    "shot": "shot-080.png",
+    "action": "expiry_notice",
+    "from": "support@namesilo.com",
+    "subject": "Domains just expired",
+    "domains": [
+      "automl.net"
+    ]
+  },
+  {
+    "shot": "shot-081.png",
+    "action": "removal",
+    "from": "accounts@dynadot.com",
+    "subject": "removed from account",
+    "domains": [
+      "xchangeshop.com"
+    ],
+    "expiry": "2024-07-17"
+  },
+  {
+    "shot": "shot-082.png",
+    "action": "expiry_notice",
+    "from": "alert@spaceship.com",
+    "subject": "Your domains expired",
+    "domains": [
+      "borderlesspay.io",
+      "borderlesspay.co"
+    ],
+    "expiry": "2026-03-25"
+  },
+  {
+    "shot": "shot-083.png",
+    "action": "expiry_notice",
+    "from": "namesilo.com",
+    "subject": "Expired Domain Notification",
+    "domains": [
+      "mortgagesuk.com"
+    ]
+  },
+  {
+    "shot": "shot-084.png",
+    "action": "removal",
+    "from": "accounts@dynadot.com",
+    "subject": "removed from account",
+    "domains": [
+      "getitbigger.com"
+    ],
+    "expiry": "2026-04-24"
+  },
+  {
+    "shot": "shot-085.png",
+    "action": "expiry_notice",
+    "from": "support@namebright.com",
+    "subject": "Expired Domains",
+    "domains": [
+      "ShroomInvest.com"
+    ]
+  },
+  {
+    "shot": "shot-086.png",
+    "action": "removal",
+    "from": "donotreply@godaddy.com",
+    "subject": "product's been removed",
+    "domains": [
+      "web3gaming.co"
+    ]
+  },
+  {
+    "shot": "shot-087.png",
+    "action": "expiry_notice",
+    "from": "alert@spaceship.com",
+    "subject": "expired",
+    "domains": [
+      "selfcustody.exchange"
+    ],
+    "expiry": "2024-12-03"
+  },
+  {
+    "shot": "shot-088.png",
+    "action": "expiry_notice",
+    "from": "support@sav.com",
+    "subject": "Action Required: Please Renew Domain",
+    "domains": [
+      "cryptoinvestmentguide.com"
+    ],
+    "expiry": "2024-12-01"
+  },
+  {
+    "shot": "shot-089.png",
+    "action": "expiry_notice",
+    "from": "support@namesilo.com",
+    "subject": "Domains just expired",
+    "domains": [
+      "digitalbox.net"
+    ]
+  },
+  {
+    "shot": "shot-090.png",
+    "action": "expiry_notice",
+    "from": "renewals@namecheap.com",
+    "subject": "has expired - reactivate",
+    "domains": [
+      "fiatpodcast.com"
+    ],
+    "expiry": "2024-05-17"
+  },
+  {
+    "shot": "shot-091.png",
+    "action": "expiry_notice",
+    "from": "support@namebright.com",
+    "subject": "Expired Domains",
+    "domains": [
+      "ConquerPoker.com"
+    ]
+  },
+  {
+    "shot": "shot-092.png",
+    "action": "removal",
+    "from": "support@cosmotown.com",
+    "subject": "has expired",
+    "domains": [
+      "simarleensodhi.com"
+    ],
+    "expiry": "2023-10-28"
+  }
+]
