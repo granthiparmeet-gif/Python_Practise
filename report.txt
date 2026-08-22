@@ -1,0 +1,13 @@
+/Users/parmeetsingh/Desktop/Python Practise
+addition.py
+curr.pypwd
+current.py
+current1.py
+factorial_at_base.py
+haru.txt
+implementation
+jameet.txt
+now.txt
+parmeet.txt
+practise
+report.txt
