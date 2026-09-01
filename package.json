@@ -1,0 +1,15 @@
+{
+  "name": "domain-ledger",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "doctor": "node scripts/doctor.mjs",
+    "pack:secrets": "node scripts/pack-secrets.mjs",
+    "gmail:setup": "node scripts/gmail-setup.mjs",
+    "gmail:phrases": "node scripts/discover-gmail-phrases.mjs",
+    "gmail:phrases:sample": "node scripts/discover-gmail-phrases.mjs sample 5",
+    "gmail:phrases:subjects": "node scripts/discover-gmail-phrases.mjs subjects 200"
+  }
+}

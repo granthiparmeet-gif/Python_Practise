@@ -1,0 +1,906 @@
+Okay so in this document I have given you prompts as I came to understand, in this chain of prompts arrange
+accordingly to your logic, since it is all unarranged, this has screenshots that would be very very useful to you.
+Remember we are building a tool for the future, but it should also have historic data. So domains will be added in
+the future too and they already have been added adn removed.
+
+The flow is generally like , I buy a domain name either hand register, or auctions or aftermarket, then after a year
+it get expired, I can renew , push or transfer the domain to my own other registrars in both emails, even if it goes
+for grace it can be renewed. A domain can be renewed or transferred even after it has expired and even it goes
+in the grace period. You can check the internet for the flow.
+
+SOMEWHERE i would love if i get a reminder of some kind for critical informations, i would like to modify the
+labels filters a bit, look how they can be more accurate, add more labels maybe send me an email if a domain
+name gets sold etc, you will need to give me an idea on how we can improve it.
+
+
+We will now have dropdowns in the frontend like:
+
+   1.​ Domains at parmeetsgranthi@gmail.com
+   2.​ Domains at letsliterate@gmail.com
+   3.​ Domains sold
+   4.​ Domains expired
+   5.​ Other expenses
+
+I also do operations in bulk , so a single email can have information about few domains.
+
+You will see these screenshots then search for these same emails and then fetch informations.
+
+Remember we will create a tool that wont use any LLMS, we will just do it without LLMs and simple programming
+language.
+
+
+Below Emails should be ignored as these are only for Afternic fast transfer, although we can see the domain
+name and price but these should be ignored, you get these emails from accounts@dynadot.com:
+Below Emails (orders@dynadot.com) shows that there can be bulk domain name registration , as you could see
+that there are two domain names registered: digitaltwinlife.com and builddt.com and lines like these in the body
+“builddt.com - domain registration ​
+1 year ($7.88)$7.88
+
+Result: Registered
+
+” shows the purchase price of builddt.com
+Below email shows that domain names renewals emails are usually done in bulk, there are more than 10 domain
+names in this email , in the body you can even see : builddt.com - Domain Renewal
+
+1 year ($10.19)$10.19
+
+
+
+Once we get these emails the renewal date is extended by a year
+
+You usually get these emails from “
+
+
+Dynadot Orders <orders@dynadot.com>
+”
+We get such emails from as a reminder to renew the domain name, these could be referred to find the expiration
+date of a domain name:​
+Below emails should be ignored as these say us balance insufficient to renew domains:​
+
+
+
+
+​
+Below emails should be ignored as they say that I created a selling link for afternic and that expired. ​
+​
+Below emails are a reminder that our domain name is expiring, such emails can be referred for domain expiration
+date:​
+
+
+
+
+Below emails are domain renewal emails , the body shows how much we have spent on domain name renewal,
+
+builddt.com - Domain Renewal
+
+1 year ($10.88)$10.88
+:​
+Below emails are domain Purchased , here we will consider the total charged amount:​
+Below emails can be used to as a reminder for domain name expiration:​
+Below such emails should be used as domain name renewal, A domain name transfer would be considered as a
+domain name renewal, the price is clearly visible in the body:​
+Below emails would be considered under purchased:​
+Below emails would be considered under renewal : 1 Year Auto Renewal of comfytravels.com​
+​
+
+
+
+
+Below emails would be considered under reminder for domain name renewal, we can find the expiration date in
+such emails :
+Below emails show that 3 emails are registered:​
+But we need to find the cost of individual registration: You could see the domain name registration price of
+createtwin.com - domain registration
+
+1 year ($7.88)$7.88
+
+Result: Registered
+Below emails would be considered under reminder for domain name renewals we will ignore the labels as of now
+as they might change “expired”​
+
+
+
+
+I will add a series of email that we will use for reminder for a domain name expired:​
+Below is the domain purchase receipt:​
+Below is the domain purchase receipt, as you could see there are two domains purchased but both dont have
+individual price clearly visible in such case we will divide the price with number, example 22/2=11 for each:​
+Domain purchase receipt:​
+Below is a domain name transfer receipt, which is actually considered a domain renewal receipt:​
+​
+Below are the domain purchase receipt:​
+
+
+
+
+A domain name will be considered as removed from account, either when it is expired or when it is sold:​
+​
+So below are the screenshot of domain name removed from account or domain name sold:​
+​
+Also remember once a domain name is sold, we dont get the exact amount, registrars or aftermarkets take away
+the commission. So there would be two prices in such emails we will consider the lower amount as our profit and
+higher amount as the domain sold for.​
+​
+First I will add all the screenshots of domain name sold
+    ​
+​
+​
+If the amount received after commission is not visible in the given email , we should check the nearby emails of
+the same domain name :
+The commission could be available in emails like below:​
+“Your funds are on the way”​
+
+
+
+
+I will continue with domain name sales email:
+If one of my counter offer is accepted thats a sale:​
+We have just sent you a payment…these type of sentences are usually the amount received after commission.
+
+Also the template of dynadot, afternic and others has changed with time , and it may change further, so we have
+to act accordingly
+Now i will give you more details about the domain name purchasing :
+How can we expect the domain name purchase receipt:
+Below is one more example of bulk domain purchase​
+An example of domain name purchased through aftermarket:​
+
+
+
+
+An example of domain purchased from auctions, as an example there are two domain names that i won on a
+single day and the price of each can be found in the body:
+Another example of domain purchased through aftermarket:​
+The backordered domain names would be considered as a domain purchased amount:​
+Domain name won at sav.com:​
+
+
+
+
+Below is an example of domain purchased through GoDaddy.
+Namesilo auction purchased:​
+A few more purchase example:​
+Example of domain name renewal reminder from porkbun:​
+
+
+
+
+A drop down window for sold domains would be the really appreciated:
+
+Out of all these sold domain names we will need information like , on which platform did we bought the domain
+name from , which platform did we sold the domain name , the sold price, the price after commission, the price
+before commission, the price we bought for, and eventually the profit that we made through these domain names.
+
+
+​
+​
+Remember one thing that the regsitrars keep changing, so a domain name might be bought from a different
+registrar, its then transferred to a different registrar, transfer of domain name has a cost generally, which is
+counted in renewal.
+Okay so now we will create one more folder of removed domain names:​
+​
+In these we will add domain names from history that are currently not in our account. And for these we will create
+a separate drop down window.
+
+Below is the list of domain names that I know of , BUT there may be domain names that are I might not know of :
+
+AttemptNow.com
+SpecifyNow.com
+AdmireNow.com
+RefuseNow.com
+SnoreNow.com
+MarinateNow.com
+PreferNow.com
+AssumeNow.com
+BegNow.com
+ForbidNow.com
+ForgetNow.com
+RealestateVsStocks.com
+DenyNow.com
+ImplyNow.com
+InsistNow.com
+ShutNow.com
+cryptolithic.com
+covidtax.com
+car-charger.com
+TenADay.com
+DetermineNow.com
+BurpNow.com
+HeapNow.com
+KetogenicDietMenu.com
+DislikeNow.com
+DifferNow.com
+ManmeetSingh.com
+daoforums.com
+franchiseSummit.com
+WeddingShoe.com
+bestplacestovisitinindia.com
+ChesterfieldCountyRealEstate.
+com
+PortMacquarieRealEstate.com
+WashoeCountyRealEstate.com
+CriticizeNow.com
+IgnoreNow.com
+IntendNow.com
+MentionNow.com
+MoanNow.com
+NarrowNow.com
+NeglectNow.com
+OweNow.com
+PryNow.com
+QuadrupleNow.com
+StarTrailPhotography.com
+SupposeNow.com
+SwearNow.com
+dexplace.com
+YourSafePlace.com
+cryptototality.com
+best4kmonitor.com
+best4kmonitors.com
+cryptohonorarium.com
+cryptoparaphernalia.com
+examinenow.co
+cryptopatrimony.com
+condocrypto.com
+cryptoaccession.com
+cryptoannals.com
+cryptobaggage.com
+cryptochattel.com
+cryptochattels.com
+cryptodaybook.com
+cryptodimestore.com
+cryptofete.com
+cryptowherewithal.com
+decocrypto.com
+evecrypto.com
+musecrypto.com
+myecrypto.com
+raycrypto.com
+roofcrypto.com
+cryptominz.com
+meetingcrypto.com
+SportShop365.com
+FivebigQuestions.com
+Immunization.care
+daostakeholder.com
+daostakeholders.com
+dexadviser.com
+dexaffiliate.com
+dexaffiliates.com
+dexcompliance.com
+dexforecast.com
+dexinformation.com
+dexinquiry.com
+dexjournal.com
+dexkingdom.com
+dexvalley.com
+discussdex.com
+cross-chaindex.com
+crosschaindex.io
+daotokenholder.com
+daotokenholders.com
+cross-chaindefi.com
+crosschaindefi.net
+multi-experience.com
+multiexperience.net
+CrossfitTrainer.com
+pinballmeta.com
+examinenow.net
+DrSurgical.com
+ComicIdeas.com
+Muslimcuisine.com
+MrTeaCoffee.com
+PristineForest.com
+hygieneactivities.com
+hygienespace.com
+safemarscash.com
+safemarscoin.com
+safemarswallet.com
+eyehygiene.com
+hygienebuilder.com
+cupidaid.com
+RobloxCreator.com
+DentalArmy.com
+HighendClothing.com
+ConquerPoker.com
+RussianGamer.com
+YogaCarnival.com
+DetoxHut.com
+FlexiIncome.com
+PaidLibrary.com
+SingleAnswer.com
+FreelanceLeader.com
+CheapGanja.com
+360Cafe.com
+CreatorSquad.com
+SavingsUS.com
+SquareDiamondRings.com
+AdvanceWorkshop.com
+OrganicVisitors.com
+4kHentai.com
+AddressTracking.com
+AttractiveColors.com
+BathCozy.com
+BrandPricing.com
+BrownAttorney.com
+HolyAdvice.com
+OralHealthy.com
+OvertakeNow.com
+PeelNow.com
+SpeedAccessories.com
+TransMarriage.com
+TransparentView.com
+SmartSoundbar.com
+SmartSpotlights.com
+VeganLoafers.com
+AnxietyHelpline.com
+DatingConsultancy.com
+PlantbasedShampoo.com
+VeteransCounselor.com
+FindurLove.com
+IndoorKing.com
+NutritionSuppliers.com
+SendPackages.com
+Viagrastore.com
+WellbeingSupplements.com
+FaithPrint.com
+FirstGay.com
+AsianBreakfast.com
+GovernanceToken.io
+GovernanceToken.net
+GovernanceTokens.io
+LinuxTricks.com
+Web3Advertiser.com
+Web3Advertisers.com
+Web3Balance.com
+Web3Connectivity.com
+Web3Musicians.com
+Web3Processor.com
+Web3Superstore.com
+evCredit.com
+FirstCounseling.com
+CanalHealth.com
+FarmersOfAmerica.com
+HerbCosmetics.com
+LegacyWill.com
+AncientHeal.com
+BicycleLover.com
+EcofriendlyItems.com
+FungalCare.com
+FunkyPrinter.com
+GarlicTaste.com
+HashtagEquality.com
+HispanicBar.com
+HolySpell.com
+FirstFragrance.com
+EarnChart.com
+PleasantFragrance.com
+FasterRide.com
+CrimeDocumentaries.com
+GayQuotes.com
+MissionHemp.com
+SaintLane.com
+JackpotHunt.com
+PlanetCharger.com
+GenerativeBanking.com
+groupbuyseotools.com​
+​     ​      ​      ​
+​     ​      ​      ​
+​     ​      ​      ​
+​     ​      ​      ​
+​     ​        ​    ​
+​     ​        ​    ​
+ThePsychiatry.com
+InstantDebt.com
+ImmersiveCred.com
+ImmersivePay.net
+ethSafu.com
+ExtraHygiene.com
+GreenSafu.com
+SafuBanking.com
+SafuCredit.com
+SafuEarn.com
+SafuGain.com
+SafuLend.com
+SafuLoan.com
+SafuLoans.com
+SafuProfit.com
+SafuSaving.com
+SafuSavings.com
+SafuSwipe.com
+SafuVenture.com
+SafuWealth.com
+BrainAlign.com
+SinghInvest.com
+EconomicGain.com
+RestoreChat.com
+ImmersiveController.com
+ImmersiveControllers.com
+SundayInvest.com
+BikeLender.com
+CannaItems.com
+PredictiveBudget.com
+PredictiveCasino.com
+PredictiveDating.com
+PredictiveFunding.com
+PredictivePoker.com
+PredictiveSavings.com
+predictiveshoppping.com
+PredictiveVerse.com
+PredictiveWallet.com
+PredictiveBroker.com
+PredictiveCar.com
+PredictiveCars.com
+PredictiveChart.com
+PredictiveClimate.com
+PredictiveClothing.com
+PredictiveDefi.com
+PredictiveForum.com
+PredictiveGame.com
+PredictiveGym.com
+PredictiveJob.com
+PredictiveMortgage.com
+PredictiveMusic.com
+PredictiveOptions.com
+PredictivePayment.com
+PredictiveSolar.com
+PredictiveTalk.com
+PredictiveVehicles.com
+PredictiveBeauty.com
+PredictiveCash.com
+PredictiveCounseling.com
+predictiveev.com
+PredictiveHeal.com
+PredictiveRelief.com
+PredictiveSlot.com
+PredictiveSlots.com
+predictivev.com
+PredictiveBull.com
+PredictiveStocks.com
+PerfectHashTag.com
+GenerativeMarketing.co
+GenerativeMusic.co
+GenerativeTalk.com
+GenerativeAvatar.co
+ExplainableAI.xyz
+GenerativeFace.com
+GenerativeMail.com
+GenerativeMarketing.xyz
+GenerativeStyle.com
+GenerativeView.com
+Electricycles.com
+CrazyMeals.com
+FlavoredMilk.com
+CarrotSuite.com
+VeganBackpack.com
+VeganMayonnaise.com
+SustainableBikini.com
+ShibaFarm.com
+BudgetAvatar.com
+PinballVerse.com
+WeekendInvest.com
+EthicalCar.com
+EthicalLend.com
+EthicalArtist.com
+EthicalCreator.com
+Web3Ethical.com
+wearnpay.com
+nlppay.com
+nlpinvest.com
+nlpai.co
+ethicalai.xyz
+BudgetSlots.com
+BudgetSkin.com
+LeverageBonds.com
+BlockUp.co
+BlockHut.co
+BlockBar.co
+BlockFort.co
+deepfertility.com
+sustainstore.com
+automlbot.com
+theautoml.com
+scribblebot.com
+budgetfi.com
+agi.solutions
+RoboticsStudio.com
+auctionxr.com
+greenzk.com
+decentralizedzk.com
+multiusespace.com
+multiusespaces.com
+secondaryreuse.com
+detectemotion.com
+automljobs.com
+facialdetector.com
+ethicsbotics.com
+nlpdepot.com
+nlpinsight.com
+nlpmachine.com
+createnlp.com
+nlpbuilders.com
+automlapp.com
+automltech.com
+automltools.com
+qubitadvisor.com
+qubitexperts.com
+qubitgeek.com
+cleanqubit.com
+ecoqubit.com
+futurequbit.com
+beyondqubit.com
+betterqubit.com
+appliedbot.com
+nocodeedge.com
+edgenocode.com
+betternocode.com
+xaicentral.com
+xaidepot.com
+xaimachine.com
+xaiplace.com
+xaipoint.com
+xaiskills.com
+xaiup.com
+xaizone.com
+explainablebrain.com
+explainablemind.com
+yournocode.com
+xchangeshop.com
+serverlesspower.com
+serverlessshop.com
+ethicalnow.com
+ethicaltalk.com
+cybersecshop.com
+digitaltwinclub.com
+digitaltwinit.com
+digitaltwinlife.com
+digitaltwinly.com
+digitaltwinup.com
+digitaltwinbot.com
+twincommunity.com
+twinexpert.com
+360gamebox.com
+betterdt.com
+BankingAid.com
+ChargerExpert.com
+GainBag.com
+Hosting-Service.com
+MetaversePinball.com
+nocodeinvest.com
+LastDebt.com
+NutrientBowl.com
+SkinDeveloper.com
+TidyBeard.com
+WearAndPay.com
+Web3Dress.com
+Web3Healing.com
+Web3Hemp.com
+FinanceCell.com
+PinballMetaverse.com
+unbankedhub.com
+unbankedpay.com
+unbankedsolutions.com
+ShroomInvest.com
+nocodebrain.com
+FriendlyLend.com
+fiatpodcast.com
+betterxai.com
+responsiblebrain.com
+360gameplay.com
+MaximaLoan.com
+spiritual365.com
+digitaltwinhub.com
+digitalbox.net
+btc3tf.com
+cryptoinvestmentguide.com
+selfcustody.exchange
+noannualfeecreditcards.com
+selfcustodyexchange.com
+web3gaming.co
+web3gaming.net
+web3gaming.xyz
+web3community.co
+crmxpert.com
+BlackVictims.com
+BtcSip.com
+EthicalBrain.com
+FinancialVibes.com
+GenerativeAd.com
+GenerativeDesign.co
+GenerativeRobot.com
+MassageVR.com
+PredictiveAid.com
+PredictiveChat.com
+PredictiveCredit.com
+PredictiveHealing.com
+SafuStorage.com
+SpatialWearable.com
+VeganBuyer.com
+VrSkincare.com
+AnnuitiesInvest.com
+etfsInvest.com
+EthicalEngine.com
+EthicalChatbot.com
+ImmersiveInvest.com
+MetalsInvest.com
+SustainabilityInvest.com
+SustainableNFT.com
+TokensInvest.com
+ordinalsapp.com
+wellnessclan.com
+PodCastEdit.com
+GenerativeChat.com
+ShroomInvest.com
+GoatIntelligence.com
+EatSip.com
+netzero.world
+zerofiat.com
+automlsolutions.com
+10xbudget.com
+AvatarDevelopers.com
+Beardfull.com
+BridalBoots.com
+BudgetFlying.com
+CompareEngine.com
+ExpertCourier.com
+FinancialSide.com
+LearnRiding.com
+MetalsInvest.com
+nocodecube.com
+PodLoud.com
+PremiumCoupons.com
+PremiumLend.com
+PremiumShrooms.com
+QualityShrooms.com
+BootyAid.com
+MetaPinball.com
+SustainableShave.com
+beyondxai.com
+decentralized365.com
+detectemotions.com
+digitaltwin.cc
+digitaltwinbox.com
+goodnlp.com
+graffiti365.com
+HairAndNailSalon.com
+net0.world
+nlpcare.com
+perfectnlp.com
+nocustody.com
+automltech.com
+betternlp.com
+buildnlp.com
+customizednlp.com
+responsiblenlp.com
+tailorednlp.com
+democratizedgenai.com
+247information.com
+buidler.ai
+aitrismsolutions.com
+ctemsolutions.com
+discreetmarketing.com
+gummiesshop.com
+web3community.xyz
+BridalClothes.com
+decodingfuture.com
+LeverageProfit.com
+SuccessWebinar.com
+EthicalAd.com
+ChargingSpots.com
+UpcyclingHub.com
+GenerativeMarketing.net
+ethicbot.com
+NocodeMind.com
+SolarSolutions.net
+roboticsstation.com
+EthicalWeb3.com
+NewSecurities.com
+BehavioralCounselor.com
+LatestCoins.com
+SerialTraveler.com
+GenerativeGame.com
+realestateroute.com
+GetItBigger.com
+SmartCopywriter.com
+BorderlessPay.xyz
+BorderlessPay.io
+BorderlessPay.co
+Efficient.Solutions
+zerocodeHub.com
+customnlp.com
+optimize.solutions
+mortgagesuk.com
+futuredt.com
+InvestmentPodcast.com
+explainablebot.com
+automl.net
+gamefisolutions.com
+qubit.cc
+GloryInvest.com
+TradingTutorial.com
+TotalLifestyle.com
+RefinanceOptions.com
+PocketSpring.com
+FindGF.com
+highloan.com
+CarbonBlog.com
+HonestPodcast.com
+JagmeetSingh.com
+YourPsych.com
+PredictiveMind.com
+FundsUSA.com
+MigraineHealing.com
+ImmersiveClassroom.com
+AnxietyAway.com
+HustleCoach.com
+ReliefShelter.com
+DeepMindset.com
+
+
+
+
+automllabs.com
+builddt.com
+comfytravels.com
+createtwin.com
+SustainableWeb3.org
+digitalbanking.io
+emotionalrobotics.com
+kloudlabs.com
+onchain.solutions
+perfectfunnel.com
+precise.solutions
+premiumfly.com
+psychiatryandwellness.com
+
+
+responsiblebot.com
+rwasolutions.com
+saas.solutions
+UnbankedPay.com
+paperbag.org
+ImmediateWellness.com
+bankingbull.com
+fiswipe.com
+wellnessassistance.com
+wellnessseek.com
+xassistance.com
+tigerinsure.com
+homemave.com
+FlyFuze.com
+VergeVolt.com
+GlamBuild.com
+GlamFine.com
+RoboHeroes.com
+AlphaPhotographer.com
+InvestmentSync.com
+SyncCrunch.com
+SyncHunt.com
+SnapAngle.com
+FocusSeek.com
+SeaStash.com
+BaseStash.com
+StrategicHive.com
+PeakPile.com
+PeakPrediction.​com
+ParallelKit.​com
+RoboticsSpot.com
+AceTwin.com
+BuildBrowse.com
+StrikeBuild.com
+ShortBuild.com
+FlashSmith.com
+FlashAgentic.com
+AgenticCrate.com
+AgenticWrap.com
+TwinGuru.com
+TurnGuru.com
+POWERFULIQ.com
+IdeaAura.com
+IdeaTwin.com
+AEOanalysis.com
+UnlockSpark.com
+MuseFast.com
+GeoNearMe.com
+InsightStrike.com
+AscendGuru.com
+GoatSync.com
+SupaShift.com
+SupaQuest.com
+VoyageRadar.com
+CVCompanion.com
+SupaSpy.com
+
+
+
+
+Okay so now I have domains also at another account at another email id that is letsliterate@gmail.com, so we
+will create a separate drop down for this id , luckily all of the domain names are kept at dynadot, So now it will be
+a multiple account domain name management tools. ​
+​
+Below domain names are present at dynadot,
+
+Name
+TradingTutorial.com
+TotalLifestyle.com
+RefinanceOptions.com
+PocketSpring.com
+FindGF.com
+highloan.com
+CarbonBlog.com
+HonestPodcast.com
+JagmeetSingh.com
+YourPsych.com
+PredictiveMind.com
+FundsUSA.com
+MigraineHealing.com
+ImmersiveClassroom.com
+AnxietyAway.com
+HustleCoach.com
+ReliefShelter.com
+DeepMindset.com
+Shroomsx.com
+EthicalChat.com
+EthicalFi.com
+AgenticVoiceAssistant.com
+AgenticTogether.com
+digitaltwin360.com
+ExamineNow.com
+sustainableweb3.com
+Unbanked.app
+
+
+So we will now have dropdowns like
+
+   6.​ Domains at parmeetsgranthi@gmail.com
+   7.​ Domains at letsliterate@gmail.com
+   8.​ Domains sold
+   9.​ Domains expired
+   10.​Other expenses
+
+Each of 1 and 2 will have domains removed from account till 30 days , i mean if they have been removed from
+account in the past 30 days they will shown here too. And also at expired or sold domains.
+
+
+Now lets come to other expenses:​
+
+Crunchbase
+Twitter
+Hostinger
+Linkedin
+VPN
+DotDB
+NameBio
+Godaddy Premium
+Gspace
+Such screenshots to dotdb which can be found in body, with price:​
+Payments for hosting:​
+In short , An idea of what I have spent on to, I mean I want all the receipts related to domain names. I will paste a
+few receipts of namebio.
+
+
+Ofcourse I have given you as much information as I can but you need to find all the receipts and domain name
+information, and find how much we have actually spent on this business.​
+
+
+You need to give me an option to manually enter or edit the entries from frontend, since you might be missing
+some, and some might have other overheads.
+Okay so some domains have moved from one account to another like from parmeetsgranthi@gmail.com to
+letsliterate@gmail.com and vice versa. Such are usually denoted by account change, so in account change we
+need to confirm both the accounts like it started from one account and ended in another account:
+Remember a domain push is free and dont count under renewal.
+
+
+
+
+So a domain may be purchased under a different account, and then it may be pushed to a different account.
+
+
+There might be some domains that I might have sold in profit but we will still list them under sold domains rather
+than expired domains.
+
+
+Okay now i will provide you a list of domain names , so that you get an idea of domain name expired and it went
+in a loss ,
+I can still renew the domain name even after expiration remember this rule:
+And so on
+
