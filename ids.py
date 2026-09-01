@@ -2484,50 +2484,136 @@ count =1
 #     print ("Function 2")
 
 
-import asyncio
+# import asyncio
 
 
-async def function1():
-    await asyncio.sleep(6)
-    print ("Function 1")
+# async def function1():
+#     await asyncio.sleep(6)
+#     print ("Function 1")
 
-async def function2():
-    await asyncio.sleep(3)
-    print ("Function 2")
+# async def function2():
+#     await asyncio.sleep(3)
+#     print ("Function 2")
 
-import asyncio
-import time 
+# import asyncio
+# import time 
 
-async def function1():
-    start = time.time()
-    await asyncio.sleep(5)
-    end = time.time()
+# async def function1():
+#     start = time.time()
+#     await asyncio.sleep(5)
+#     end = time.time()
 
-    total = end - start
-    print(total)
+#     total = end - start
+#     print(total)
 
-async def function2():
-    start = time.time()
-    await asyncio.sleep(6)
-    end = time.time()
+# async def function2():
+#     start = time.time()
+#     await asyncio.sleep(6)
+#     end = time.time()
 
-    total = end - start
-    print(total)
-
-
-async def main():
-    asyncio.gather(
-        function1(), 
-        function2()
-    )
+#     total = end - start
+#     print(total)
 
 
-asyncio.run(main())
+# async def main():
+#     asyncio.gather(
+#         function1(), 
+#         function2()
+#     )
 
 
+# asyncio.run(main())
 
 
+# from Calculator import add
 
 
+# def test_add():
+#     assert add(2,3)==5
+
+# test_add()
+
+
+# import threading
+
+# def task():
+#     print("Working...")
+
+# t1 = threading.Thread(target=task)
+# t2 = threading.Thread(target=task)
+
+# t1.start()
+# t2.start()
+
+# t1.join()
+# t2.join()
+
+
+# from multiprocessing import Process
+
+# def task():
+#     print("The task is running..")
+
+
+# if __name__=="__main__":
+#     t1 = Process(target=task)
+#     t2 = Process(target = task)
+
+#     t1.start()
+#     t2.start()
+
+#     t1.join()
+#     t2.join()
+
+# import requests
+
+# response = requests.get("https://api.jsonplaceholder.dev/users/1")
+
+# response.status_code
+# data = response.json()
+
+# print(data["name"])
+
+
+# import requests
+
+
+# data = {
+#     "name":"Parmeet",
+#     "age":23
+# }
+# response = requests.post("https://api.example.com/users", json = data)
+
+# print(response.status_code)
+# print(response.json())
+
+
+# headers = {
+#     "OPENAI_API_KEY": "srtwrgcjbabscals",
+
+# }
+
+# response.raise_for_status()
+# response = requests.get("https://parmeetsingh.com/users", headers=headers)
+
+
+# response.raise_for_status()
+
+
+# import timeit
+
+# result = timeit.timeit(
+#     "sum(range(1000))", number =1000
+# )
+
+# print(result)
+
+
+from functools import lru_cache
+
+@lru_cache
+def expressive(x):
+    print("calculating...")
+    return(x*x)
 
 
