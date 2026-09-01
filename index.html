@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Domain Ledger</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=31" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="topbar">
+          <div class="brand">
+            <h1>Domain Ledger</h1>
+            <p id="view-kicker" class="view-kicker">Portfolio</p>
+          </div>
+          <div class="actions">
+            <label class="view-label" for="view-select">
+              Tab
+              <select id="view-select" class="view-select" aria-label="Portfolio view">
+                <option value="sold">Sold</option>
+                <option value="expired">Expired</option>
+                <option value="expenses">Expenses</option>
+              </select>
+            </label>
+            <label class="view-label" for="domain-search">
+              Find
+              <input id="domain-search" class="view-select domain-search" type="search" placeholder="Search a name" autocomplete="off" />
+            </label>
+            <div class="currency-toggle" role="group" aria-label="Display currency">
+              <button id="currency-usd-btn" class="currency-btn is-active" type="button" data-currency="USD">USD</button>
+              <button id="currency-inr-btn" class="currency-btn" type="button" data-currency="INR">INR</button>
+            </div>
+            <button id="gmail-sync-btn" class="ghost-btn" type="button">Sync Gmail</button>
+            <button id="manual-entry-btn" class="ghost-btn" type="button">Add entry</button>
+            <button id="refresh-btn" class="primary-btn">Refresh</button>
+          </div>
+        </div>
+        <div id="health-bar" class="health-bar" hidden></div>
+        <p id="status" class="status-line" hidden>Starting…</p>
+        <p id="provider-status" class="provider-status" hidden></p>
+        <div id="view-summary" class="view-summary" hidden></div>
+        <div id="reminders-banner" class="reminders-panel" hidden></div>
+      </section>
+
+      <section class="table-shell">
+        <div class="table-wrap">
+          <table class="domains-table" id="main-table">
+            <colgroup id="table-cols"></colgroup>
+            <thead id="table-head"></thead>
+            <tbody id="domains-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <dialog id="manual-dialog" class="manual-dialog">
+        <form method="dialog" id="manual-form" class="manual-form">
+          <h2>Manual entry</h2>
+          <p class="manual-hint">Use when Gmail missed a receipt or you need to correct amounts.</p>
+          <label>Domain / vendor <input name="domain" required placeholder="example.com or Hostinger" /></label>
+          <label>
+            Type
+            <select name="eventType">
+              <option value="purchase">Purchase</option>
+              <option value="renewal">Renewal</option>
+              <option value="transfer">Transfer (counts as renewal)</option>
+              <option value="sale">Sale</option>
+              <option value="expense">Other expense</option>
+              <option value="removal">Removal / expired</option>
+              <option value="push">Account push (free)</option>
+            </select>
+          </label>
+          <label>Date <input name="eventDate" type="date" /></label>
+          <label>Mailbox
+            <select name="mailbox" id="manual-mailbox"></select>
+          </label>
+          <label>Amount USD <input name="amountUsd" type="number" step="0.01" /></label>
+          <label>Sold for (gross USD) <input name="amountGross" type="number" step="0.01" /></label>
+          <label>Vendor / platform <input name="vendor" placeholder="Afternic, Hostinger…" /></label>
+          <label>Notes / subject <input name="subject" placeholder="Optional" /></label>
+          <div class="manual-actions">
+            <button type="submit" class="primary-btn" value="save">Save</button>
+            <button type="submit" class="ghost-btn" value="cancel">Cancel</button>
+          </div>
+        </form>
+      </dialog>
+
+      <dialog id="source-dialog" class="source-dialog">
+        <div class="source-dialog-inner">
+          <header class="source-dialog-head">
+            <div>
+              <h2 id="source-dialog-title">Emails</h2>
+              <p id="source-dialog-summary" class="manual-hint"></p>
+            </div>
+            <button type="button" id="source-dialog-close" class="ghost-btn">Close</button>
+          </header>
+          <div id="source-dialog-list" class="source-mail-list"></div>
+          <div id="source-dialog-mail" class="source-mail-view" hidden>
+            <button type="button" id="source-back-btn" class="ghost-btn">Back to list</button>
+            <div class="source-mail-toolbar">
+              <a id="source-mail-open" class="primary-btn source-open-link" target="_blank" rel="noopener noreferrer" hidden>Open this email in Gmail</a>
+            </div>
+            <h3 id="source-mail-subject"></h3>
+            <p id="source-mail-meta" class="source-mail-meta"></p>
+            <pre id="source-mail-body" class="source-mail-body"></pre>
+          </div>
+        </div>
+      </dialog>
+    </main>
+
+    <script src="app.js?v=31"></script>
+  </body>
+</html>
