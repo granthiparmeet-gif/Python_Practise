@@ -1,0 +1,24 @@
+.env
+.env.*
+!.env.example
+secrets/config.env
+secrets/gmail/**
+!secrets/gmail/.gitkeep
+!secrets/config.env.example
+secrets-bundle/
+.gmail-tokens.json
+.domain-ledger-state.json
+.domain-ledger.db
+.domain-ledger.db-*
+.fx-rates.json
+client_secret_*.json
+.DS_Store
+node_modules
+*.log
+.rnd-shots/
+.rnd-ocr/
+/data/private-known-domains.js
+/data/rnd-ocr-index.json
+/data/rnd-pdf-full.txt
+/data/rnd-screenshot-hits.json
+/Prompts for RND.pdf
